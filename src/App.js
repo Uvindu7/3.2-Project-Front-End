@@ -8,7 +8,7 @@ import Footer from './components/layout/Footer';
 import './App.css';
 
 function App() {
-  const [view, setView] = useState('product'); // Defaulting to product for now as per user focus
+  const [view, setView] = useState('home'); 
 
   const showHome = () => setView('home');
   const showProduct = () => setView('product');
@@ -23,10 +23,12 @@ function App() {
             <ProductSection 
               title="NEW ARRIVALS" 
               description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
+              onProductClick={showProduct}
             />
             <ProductSection 
               title="BEST SELLER" 
               description="Discover our most popular items. Shop the favorites everyone loves!" 
+              onProductClick={showProduct}
             />
             <CategorySection />
           </>

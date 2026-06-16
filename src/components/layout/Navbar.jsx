@@ -1,7 +1,7 @@
 import React from 'react';
 import './Navbar.css';
 
-const Navbar = ({ onHomeClick, onProductClick }) => {
+const Navbar = ({ onHomeClick }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container container">
@@ -13,16 +13,9 @@ const Navbar = ({ onHomeClick, onProductClick }) => {
           >
             HOME
           </a>
-          <a 
-            href="/clothing" 
-            className="nav-link"
-            onClick={(e) => { e.preventDefault(); onProductClick(); }}
-          >
-            CLOATH
-          </a>
-          <a href="/trending">TRENDING</a>
-          <a href="/contact">CONTACT</a>
-          <a href="/about">ABOUT US</a>
+          <a href="/trending" className="nav-link">TRENDING</a>
+          <a href="/contact" className="nav-link">CONTACT</a>
+          <a href="/about" className="nav-link">ABOUT US</a>
         </div>
 
         <div className="nav-logo">

@@ -116,14 +116,17 @@ const ProductDetails = ({ onBack }) => {
           <ProductSection 
             title="SMART RECOMMENDATIONS" 
             description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
+            onProductClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
           />
           <ProductSection 
             title="RELATED PRODUCTS" 
             description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
+            onProductClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
           />
           <ProductSection 
             title="RECENTLY VIEWED PRODUCTS" 
             description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
+            onProductClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
           />
         </div>
       </div>
