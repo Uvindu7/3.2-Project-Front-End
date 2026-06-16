@@ -56,12 +56,14 @@
 .quick-add-btn {
   width: 100%;
   padding: 0.8rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: #ccc;
   color: #111;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.1em;
-  backdrop-filter: blur(4px);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
 .quick-add-btn.added {
@@ -74,6 +76,6 @@
 }
 
 .product-card:hover .quick-add-btn:not(.added) {
-  background: rgba(0, 0, 0, 0.8);
+  background: #000;
   color: white;
 }
