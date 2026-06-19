@@ -5,7 +5,6 @@ import ProductSection from './components/home/ProductSection';
 import CategorySection from './components/home/CategorySection';
 import ProductDetails from './components/product/ProductDetails';
 import Footer from './components/layout/Footer';
-import './App.css';
 
 function App() {
   const [view, setView] = useState('home'); 
@@ -14,7 +13,7 @@ function App() {
   const showProduct = () => setView('product');
 
   return (
-    <div className="App">
+    <div className="min-h-screen bg-[#fcfcfc] font-sans text-text-main antialiased selection:bg-black selection:text-white">
       <Navbar onHomeClick={showHome} onProductClick={showProduct} />
       <main>
         {view === 'home' ? (
@@ -42,3 +41,4 @@ function App() {
 }
 
 export default App;
+
