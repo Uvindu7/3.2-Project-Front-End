@@ -1,67 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
 
-:root {
-  --primary: #000000;
-  --secondary: #ffffff;
-  --accent: #f0f0f0;
-  --text-main: #1a1a1a;
-  --text-muted: #666666;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --max-width: 1440px;
+@layer base {
+  :root {
+    --primary: #000000;
+    --secondary: #ffffff;
+    --accent: #f0f0f0;
+    --text-main: #1a1a1a;
+    --text-muted: #666666;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --max-width: 1440px;
+  }
+
+  body {
+    font-family: theme('fontFamily.sans');
+    background-color: #fcfcfc;
+    color: theme('colors.text-main');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: theme('lineHeight.relaxed');
+  }
+
+  h1, h2, h3, .brand-font {
+    font-family: theme('fontFamily.outfit');
+    text-transform: uppercase;
+    letter-spacing: theme('letterSpacing.wider');
+  }
+
+  a {
+    text-decoration: none;
+    transition: all 300ms theme('transitionTimingFunction.custom');
+  }
+
+  button {
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: none;
+    transition: all 300ms theme('transitionTimingFunction.custom');
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  section {
+    padding-top: theme('spacing.20');
+    padding-bottom: theme('spacing.20');
+  }
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer components {
+  .container {
+    max-width: theme('maxWidth.max-width');
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: theme('spacing.8');
+    padding-right: theme('spacing.8');
+  }
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #fcfcfc;
-  color: var(--text-main);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3, .brand-font {
-  font-family: 'Outfit', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: var(--transition);
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  background: none;
-  transition: var(--transition);
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-.container {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-section {
-  padding: 5rem 0;
-}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -80,3 +86,4 @@ section {
 ::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
+
