@@ -6,17 +6,22 @@ import CategorySection from './components/home/CategorySection';
 import ProductDetails from './components/product/ProductDetails';
 import Footer from './components/layout/Footer';
 
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+
 function App() {
   const [view, setView] = useState('home'); 
 
   const showHome = () => setView('home');
   const showProduct = () => setView('product');
+  const showLogin = () => setView('login');
+  const showRegister = () => setView('register');
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] font-sans text-text-main antialiased selection:bg-black selection:text-white">
-      <Navbar onHomeClick={showHome} onProductClick={showProduct} />
+      <Navbar onHomeClick={showHome} onProductClick={showProduct} onLoginClick={showLogin} />
       <main>
-        {view === 'home' ? (
+        {view === 'home' && (
           <>
             <Hero onShopNow={showProduct} />
             <ProductSection 
@@ -31,8 +36,15 @@ function App() {
             />
             <CategorySection />
           </>
-        ) : (
+        )}
+        {view === 'product' && (
           <ProductDetails onBack={showHome} />
+        )}
+        {view === 'login' && (
+          <Login onRegisterClick={showRegister} onBackClick={showHome} />
+        )}
+        {view === 'register' && (
+          <Register onLoginClick={showLogin} onBackClick={showHome} />
         )}
       </main>
       <Footer />
