@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navbar = ({ onHomeClick }) => {
+const Navbar = ({ onHomeClick, onLoginClick }) => {
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[1200px] bg-white/70 backdrop-blur-xl border border-white/30 rounded-[50px] z-[1000] shadow-md">
       <div className="flex justify-between items-center h-[60px] px-6">
@@ -17,7 +17,7 @@ const Navbar = ({ onHomeClick }) => {
           <a href="/about" className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors">ABOUT US</a>
         </div>
 
-        <div className="nav-logo">
+        <div className="nav-logo cursor-pointer" onClick={onHomeClick}>
           <span className="font-outfit font-extrabold text-xl tracking-[0.1em]">LOGO</span>
         </div>
 
@@ -35,7 +35,12 @@ const Navbar = ({ onHomeClick }) => {
               </svg>
             </button>
           </div>
-          <button className="bg-[#333] text-white px-5 py-2 rounded-[20px] text-[12px] font-semibold hover:bg-black transition-colors">SIGN IN</button>
+          <button 
+            onClick={onLoginClick}
+            className="bg-[#333] text-white px-5 py-2 rounded-[20px] text-[12px] font-semibold hover:bg-black transition-colors"
+          >
+            SIGN IN
+          </button>
         </div>
       </div>
     </nav>
