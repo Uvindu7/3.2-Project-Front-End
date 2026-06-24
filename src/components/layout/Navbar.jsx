@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navbar = ({ onHomeClick, onLoginClick }) => {
+const Navbar = ({ onHomeClick, onLoginClick, onContactClick }) => {
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[1200px] bg-white/70 backdrop-blur-xl border border-white/30 rounded-[50px] z-[1000] shadow-md">
       <div className="flex justify-between items-center h-[60px] px-6">
@@ -13,7 +13,13 @@ const Navbar = ({ onHomeClick, onLoginClick }) => {
             HOME
           </a>
           <a href="/trending" className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors">TRENDING</a>
-          <a href="/contact" className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors">CONTACT</a>
+          <a 
+            href="/contact" 
+            className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors"
+            onClick={(e) => { e.preventDefault(); onContactClick(); }}
+          >
+            CONTACT
+          </a>
           <a href="/about" className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors">ABOUT US</a>
         </div>
 

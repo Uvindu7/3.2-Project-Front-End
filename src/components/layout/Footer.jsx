@@ -16,7 +16,7 @@ const Footer = () => {
             <span className="email-icon">📧</span>
             <a href="mailto:liyaracloathing@gmail.com" className="hover:underline">liyaracloathing@gmail.com</a>
           </div>
-          
+
           <nav className="flex gap-8 flex-wrap">
             <a href="/about" className="text-[0.8rem] font-semibold opacity-70 hover:opacity-100 transition-opacity">About Us</a>
             <a href="/contact" className="text-[0.8rem] font-semibold opacity-70 hover:opacity-100 transition-opacity">Contact Us</a>
@@ -36,12 +36,12 @@ const Footer = () => {
             <a href="#" className="hover:text-[#ff3e3e] transition-colors"><i className="fab fa-tiktok"></i></a>
             <a href="#" className="hover:text-[#ff3e3e] transition-colors"><i className="fab fa-instagram"></i></a>
           </div>
-          
+
           <div className="copyright">
             2026 LIYARA Clothing. All rights reserved
           </div>
-          
-          <button className="text-white font-bold flex items-center gap-2 bg-transparent border-none" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+
+          <button className="text-white font-bold flex items-center gap-2 bg-transparent border-none" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             SCROLL TOP <span>↑</span>
           </button>
         </div>
