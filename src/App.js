@@ -8,6 +8,7 @@ import Footer from './components/layout/Footer';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import Contact from './components/contact/Contact';
 
 function App() {
   const [view, setView] = useState('home'); 
@@ -16,10 +17,11 @@ function App() {
   const showProduct = () => setView('product');
   const showLogin = () => setView('login');
   const showRegister = () => setView('register');
+  const showContact = () => setView('contact');
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] font-sans text-text-main antialiased selection:bg-black selection:text-white">
-      <Navbar onHomeClick={showHome} onProductClick={showProduct} onLoginClick={showLogin} />
+      <Navbar onHomeClick={showHome} onProductClick={showProduct} onLoginClick={showLogin} onContactClick={showContact} />
       <main>
         {view === 'home' && (
           <>
@@ -45,6 +47,9 @@ function App() {
         )}
         {view === 'register' && (
           <Register onLoginClick={showLogin} onBackClick={showHome} />
+        )}
+        {view === 'contact' && (
+          <Contact />
         )}
       </main>
       <Footer />
