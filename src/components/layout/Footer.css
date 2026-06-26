@@ -1,116 +1,218 @@
+/* Import syncopate for the ultra-premium wide high-end luxury brand layout */
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
 .footer {
-  background: #000;
-  color: #fff;
-  padding: 5rem 0 2rem;
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 4.5rem 0 2.5rem 0;
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  box-sizing: border-box;
 }
 
+.footer-container {
+  max-width: 1350px;
+  margin: 0 auto;
+  padding: 0 3.5rem;
+}
+
+/* ==========================================================================
+   TOP BRANDING HEADER STYLE
+   ========================================================================== */
 .footer-top {
   margin-bottom: 4rem;
 }
 
-.footer-branding h3 {
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 1.5rem;
-  text-transform: none;
-  opacity: 0.8;
-}
-
 .footer-branding h2 {
   font-size: 2.2rem;
+  font-weight: 400;
+  color: #cccccc;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.brand-highlight {
+  font-family: 'Syncopate', sans-serif;
   font-weight: 700;
-  margin-top: 0.5rem;
+  color: #ffffff;
+  letter-spacing: 0.05em;
 }
 
-.footer-branding span {
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: 0.1em;
-}
-
+/* ==========================================================================
+   MIDDLE LINKS & CONTACT ROW
+   ========================================================================== */
 .footer-middle {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
   padding-bottom: 2rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 2rem;
+  border-bottom: 1px solid #222222; /* Clean thin splitter bar line */
+  margin-bottom: 3.5rem;
 }
 
 .contact-info {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  font-size: 0.9rem;
+  gap: 0.75rem;
 }
 
-.footer-nav {
-  display: flex;
-  gap: 2rem;
+.mail-icon-svg {
+  color: #ffffff;
+  opacity: 0.9;
 }
 
-.footer-nav a {
-  font-size: 0.8rem;
-  font-weight: 600;
+.contact-info a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.contact-info a:hover {
   opacity: 0.7;
 }
 
-.footer-nav a:hover {
-  opacity: 1;
+/* Horizontal Inline Navigation Links */
+.footer-nav {
+  display: flex;
+  gap: 2.5rem;
 }
 
+.footer-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s ease;
+}
+
+.footer-nav a:hover {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   MASSIVE LIYARA HERO BRAND TYPEFACE
+   ========================================================================== */
 .footer-logo-massive {
+  width: 100%;
   text-align: center;
-  margin: 4rem 0;
+  margin-bottom: 4rem;
+  user-select: none;
 }
 
 .footer-logo-massive h1 {
-  font-size: clamp(5rem, 20vw, 15rem);
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  line-height: 0.8;
-  color: #fff;
-  margin: 0;
+  font-family: 'Syncopate', sans-serif;
+  font-size: 9.8rem; /* Giant stretched tracking style matching the picture */
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 0.9;
+  letter-spacing: 0.38em;
+  margin-right: -0.38em; /* Perfectly re-centers the tracking compensation offset */
 }
 
+/* ==========================================================================
+   BOTTOM DATA BAR
+   ========================================================================== */
 .footer-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.7rem;
-  opacity: 0.6;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  color: #666666;
+  font-size: 0.85rem;
 }
 
 .social-links {
   display: flex;
-  gap: 1.5rem;
-  font-size: 1.2rem;
+  gap: 1.8rem;
+}
+
+.social-links a {
+  color: #666666;
+  transition: color 0.2s ease;
 }
 
 .social-links a:hover {
-  color: #ff3e3e; /* Accent color for socials */
+  color: #ffffff;
 }
 
-.scroll-top {
-  color: #fff;
+.copyright {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #555555;
+}
+
+/* Scroll to Top Trigger Layout */
+.scroll-top-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 0.85rem;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  transition: opacity 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  opacity: 0.6;
+}
+
+.arrow-icon {
+  font-size: 1.1rem;
+  display: inline-block;
+  transform: rotate(90deg); /* Flips the double arrow brace cleanly skyward */
+  line-height: 1;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUT CONSTRAINTS
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .footer-logo-massive h1 {
+    font-size: 7.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .footer-logo-massive h1 {
+    font-size: 5.5rem;
+  }
+  .footer-branding h2 {
+    font-size: 1.8rem;
+  }
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 2rem 0;
+  }
+  .footer-container {
+    padding: 0 1.5rem;
+  }
   .footer-middle {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1.5rem;
   }
   .footer-nav {
+    gap: 1.5rem;
     flex-wrap: wrap;
-    gap: 1rem;
+  }
+  .footer-logo-massive h1 {
+    font-size: 3.2rem;
+    letter-spacing: 0.2em;
+    margin-right: -0.2em;
+  }
+  .footer-bottom {
+    flex-direction: column-reverse;
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
   }
 }
