@@ -10,36 +10,55 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Contact from './components/contact/Contact';
 
-function App() {
-  const [view, setView] = useState('home'); 
+import HomePage from "./HomePage";
+import FashionPage from "./FashionPage";
 
-  const showHome = () => setView('home');
-  const showProduct = () => setView('product');
+function App() {
+
+  const [view, setView] = useState("home");
+
+  const showHome = () => setView("home");
+  const showFashion = () => setView("fashion");
+  const showProduct = () => setView("product");
   const showLogin = () => setView('login');
   const showRegister = () => setView('register');
   const showContact = () => setView('contact');
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] font-sans text-text-main antialiased selection:bg-black selection:text-white">
-      <Navbar onHomeClick={showHome} onProductClick={showProduct} onLoginClick={showLogin} onContactClick={showContact} />
+
+      <Navbar
+        onHomeClick={showHome}
+        onFashionClick={showFashion}
+        onLoginClick={showLogin} onContactClick={showContact} />
+
       <main>
         {view === 'home' && (
           <>
             <Hero onShopNow={showProduct} />
-            <ProductSection 
-              title="NEW ARRIVALS" 
-              description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
+            <ProductSection
+              title="NEW ARRIVALS"
+              description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
               onProductClick={showProduct}
             />
-            <ProductSection 
-              title="BEST SELLER" 
-              description="Discover our most popular items. Shop the favorites everyone loves!" 
+            <ProductSection
+              title="BEST SELLER"
+              description="Discover our most popular items. Shop the favorites everyone loves!"
               onProductClick={showProduct}
             />
             <CategorySection />
           </>
         )}
-        {view === 'product' && (
+
+        {view === 'home' && (
+          <HomePage onProductClick={showProduct} />
+        )}
+
+        {view === "fashion" && (
+          <FashionPage />
+        )}
+
+        {view === "product" && (
           <ProductDetails onBack={showHome} />
         )}
         {view === 'login' && (
@@ -52,7 +71,9 @@ function App() {
           <Contact />
         )}
       </main>
+
       <Footer />
+
     </div>
   );
 }

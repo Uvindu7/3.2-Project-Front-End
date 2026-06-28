@@ -38,13 +38,14 @@ const Footer = () => {
           </div>
 
           <div className="copyright">
-            2026 LIYARA Clothing. All rights reserved
+            2026 LIYARA Clothing. All right reserved
           </div>
 
           <button className="text-white font-bold flex items-center gap-2 bg-transparent border-none" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             SCROLL TOP <span>↑</span>
           </button>
         </div>
+
       </div>
     </footer>
   );
