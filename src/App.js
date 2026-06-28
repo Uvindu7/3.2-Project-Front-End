@@ -9,6 +9,7 @@ import Footer from './components/layout/Footer';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Contact from './components/contact/Contact';
+import Shop from './components/shop/Shop';
 
 function App() {
   const [view, setView] = useState('home'); 
@@ -18,15 +19,30 @@ function App() {
   const showLogin = () => setView('login');
   const showRegister = () => setView('register');
   const showContact = () => setView('contact');
+  const showAbout = () => {
+    setView('home');
+    setTimeout(() => {
+      document.getElementById('footer')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+  const showTrending = () => setView('shop');
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] font-sans text-text-main antialiased selection:bg-black selection:text-white">
-      <Navbar onHomeClick={showHome} onProductClick={showProduct} onLoginClick={showLogin} onContactClick={showContact} />
+      <Navbar 
+        onHomeClick={showHome} 
+        onTrendingClick={showTrending}
+        onProductClick={showProduct} 
+        onLoginClick={showLogin} 
+        onContactClick={showContact} 
+        onAboutClick={showAbout}
+      />
       <main>
         {view === 'home' && (
           <>
             <Hero onShopNow={showProduct} />
             <ProductSection 
+              id="trending"
               title="NEW ARRIVALS" 
               description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
               onProductClick={showProduct}
@@ -38,6 +54,9 @@ function App() {
             />
             <CategorySection />
           </>
+        )}
+        {view === 'shop' && (
+          <Shop onProductClick={showProduct} />
         )}
         {view === 'product' && (
           <ProductDetails onBack={showHome} />
@@ -52,7 +71,9 @@ function App() {
           <Contact />
         )}
       </main>
-      <Footer />
+      <div id="footer">
+        <Footer />
+      </div>
     </div>
   );
 }
