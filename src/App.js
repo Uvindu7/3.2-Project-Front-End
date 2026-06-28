@@ -13,8 +13,6 @@ import Contact from './components/contact/Contact';
 import HomePage from "./HomePage";
 import FashionPage from "./FashionPage";
 
-import "./App.css";
-
 function App() {
 
   const [view, setView] = useState("home");
