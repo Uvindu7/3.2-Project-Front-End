@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductSection from '../home/ProductSection';
 
-const ProductDetails = ({ onBack }) => {
+const ProductDetails = () => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('Deep Charcoal');
@@ -18,7 +20,7 @@ const ProductDetails = ({ onBack }) => {
     <div className="pt-32 pb-20 bg-white">
       <div className="container">
         <div className="mb-8">
-          <button className="flex items-center gap-2 text-[0.85rem] text-[#666] font-medium transition-all duration-300 ease-custom hover:text-[#111] hover:-translate-x-1 border-none bg-transparent" onClick={onBack}>
+          <button className="flex items-center gap-2 text-[0.85rem] text-[#666] font-medium transition-all duration-300 ease-custom hover:text-[#111] hover:-translate-x-1 border-none bg-transparent" onClick={() => navigate(-1)}>
             <span>←</span> Back to Browse
           </button>
         </div>

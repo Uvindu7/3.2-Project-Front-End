@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 
-const ProductSection = ({ title, description, onProductClick }) => {
+const ProductSection = ({ title, description }) => {
   const products = [
     { id: 1, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
     { id: 2, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
@@ -24,7 +24,6 @@ const ProductSection = ({ title, description, onProductClick }) => {
               image={product.image} 
               name={product.name} 
               added={product.added} 
-              onClick={onProductClick}
             />
           ))}
         </div>

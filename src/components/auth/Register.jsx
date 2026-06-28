@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Register = ({ onLoginClick, onBackClick }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-20 relative overflow-hidden">
       {/* Background Decorative Elements */}
@@ -14,7 +17,7 @@ const Register = ({ onLoginClick, onBackClick }) => {
 
           <div className="mb-10 text-center">
             <button 
-              onClick={onBackClick}
+              onClick={() => navigate(-1)}
               className="absolute top-8 left-8 text-text-muted hover:text-black transition-colors"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -85,12 +88,12 @@ const Register = ({ onLoginClick, onBackClick }) => {
           <div className="mt-10 text-center">
             <p className="text-sm text-text-muted">
               Already have an account?{' '}
-              <button 
-                onClick={onLoginClick}
-                className="font-bold text-black border-b border-black/20 hover:border-black transition-all ml-1"
+              <Link 
+                to="/login"
+                className="font-bold text-black border-b border-black/20 hover:border-black transition-all ml-1 no-underline"
               >
                 Sign In
-              </button>
+              </Link>
             </p>
           </div>
         </div>
@@ -100,3 +103,4 @@ const Register = ({ onLoginClick, onBackClick }) => {
 };
 
 export default Register;
+
