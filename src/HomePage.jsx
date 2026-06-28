@@ -4,21 +4,19 @@ import Hero from "./components/home/Hero";
 import ProductSection from "./components/home/ProductSection";
 import CategorySection from "./components/home/CategorySection";
 
-function HomePage({ onProductClick }) {
+function HomePage() {
   return (
     <>
-      <Hero onShopNow={onProductClick} />
+      <Hero />
 
       <ProductSection
         title="NEW ARRIVALS"
         description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
-        onProductClick={onProductClick}
       />
 
       <ProductSection
         title="BEST SELLER"
         description="Discover our most popular items. Shop the favorites everyone loves!"
-        onProductClick={onProductClick}
       />
 
       <CategorySection />

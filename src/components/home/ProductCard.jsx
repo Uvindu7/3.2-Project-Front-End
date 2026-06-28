@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const ProductCard = ({ image, name, added, onClick }) => {
+const ProductCard = ({ image, name, added }) => {
+  const navigate = useNavigate();
   const [isAdded, setIsAdded] = useState(added);
 
   return (
-    <div className="w-full rounded-xl overflow-hidden bg-white transition-all duration-300 ease-custom group h-full cursor-pointer" onClick={onClick}>
+    <div className="w-full rounded-xl overflow-hidden bg-white transition-all duration-300 ease-custom group h-full cursor-pointer" onClick={() => navigate('/product')}>
       <div className="relative bg-[#f7f7f7] aspect-[3/4] flex items-center justify-center p-4 overflow-hidden">
         <img src={image} alt={name} className="w-full h-full object-contain transition-all duration-300 ease-custom group-hover:scale-105" />
         <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-[#333] z-[2] hover:bg-[#333] hover:text-white transition-colors" onClick={(e) => e.stopPropagation()}>
