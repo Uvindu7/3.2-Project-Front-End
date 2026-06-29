@@ -1,6 +1,28 @@
 import React, { useState, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductSection from '../home/ProductSection';
+import TwoDProductCard from './2DProductCard';
+import ThreeDProductCard from './3DProductCard';
+import TShirtModel from './TShirtModel';
+import SizeButton from './SizeButton';
+
+// SVG icon shown on the "3D INTERACTIVE" badge
+const Icon3D = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+    <path d="M2 17l10 5 10-5" />
+    <path d="M2 12l10 5 10-5" />
+  </svg>
+);
+
+// SVG icon shown on the "BACK TO 2D" badge
+const Icon2D = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
+  </svg>
+);
 
 const ProductDetails = () => {
   const navigate = useNavigate();

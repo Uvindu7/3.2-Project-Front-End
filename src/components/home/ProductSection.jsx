@@ -1,4 +1,3 @@
-import React from 'react';
 import ProductCard from './ProductCard';
 
 const ProductSection = ({ title, description }) => {
@@ -33,4 +32,3 @@ const ProductSection = ({ title, description }) => {
 };
 
 export default ProductSection;
-
