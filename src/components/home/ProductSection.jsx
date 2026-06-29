@@ -10,20 +10,20 @@ const ProductSection = ({ title, description, onProductClick }) => {
   ];
 
   return (
-    <section className="py-16">
+    <section className="py-6">
       <div className="container">
-        <div className="mb-10 max-w-[600px]">
+        <div className="mb-3 max-w-[600px]">
           <h2 className="text-[2rem] font-bold text-[#111] mb-2 font-outfit">{title}</h2>
           <p className="text-[0.9rem] text-text-muted">{description}</p>
         </div>
-        
+
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {products.map(product => (
-            <ProductCard 
-              key={product.id} 
-              image={product.image} 
-              name={product.name} 
-              added={product.added} 
+            <ProductCard
+              key={product.id}
+              image={product.image}
+              name={product.name}
+              added={product.added}
               onClick={onProductClick}
             />
           ))}
