@@ -1,54 +1,78 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-20 pb-8">
-      <div className="container">
-        <div className="mb-16">
-          <div className="footer-branding">
-            <h3 className="font-sans font-normal text-2xl normal-case opacity-80">Experience the Future of Fashion</h3>
-            <h2 className="text-[2.2rem] font-bold mt-2">With <span className="font-outfit tracking-widest">LIYARA</span> Clothing</h2>
+    <footer className="bg-black text-white pt-20 pb-10 px-4 md:px-8">
+      <div className="container mx-auto max-w-[1400px]">
+        <div className="flex flex-col">
+          {/* Top Branding */}
+          <div className="mb-20">
+            <h3 className="font-sans text-[1.6rem] font-normal text-[#d4d4d4] mb-1">Experience the Future of Fashoin</h3>
+            <h2 className="text-[2.5rem] font-bold text-white tracking-wide">With Liyara Clothing</h2>
+          </div>
+
+          {/* Email and Navigation */}
+          <div className="flex flex-col md:flex-row justify-between items-end border-b border-[#333] pb-6 gap-6">
+            <div className="flex items-center gap-3 text-[1rem] font-medium text-white">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <a href="mailto:liyaracloathing@gmail.com" className="hover:text-gray-300 transition-colors">liyaracloathing@gmail.com</a>
+            </div>
+
+            <nav className="flex gap-10 flex-wrap">
+              <a href="/about" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">About Us</a>
+              <a href="/contact" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Contact Us</a>
+              <a href="/" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Home</a>
+              <a href="/trending" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Trending</a>
+            </nav>
+          </div>
+
+          {/* Huge Logo Image */}
+          <div className="w-full flex justify-center">
+            <img src="/images/custom-liyara-logo.png" alt="LIYARA" className="w-full max-w-[1400px] object-contain select-none" />
+          </div>
+
+          {/* Bottom Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 items-center text-[0.75rem] text-[#777] pt-8">
+            <div className="flex gap-8 justify-start text-[1rem] text-[#999]">
+              <a href="#" className="hover:text-white transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+              </a>
+              <a href="#" className="hover:text-white transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon fill="black" points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+              </a>
+              <a href="#" className="hover:text-white transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.01.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.8-5.46-.4-2.52.49-5.18 2.4-6.87 1.34-1.18 3.11-1.78 4.88-1.57v4.02c-1.12-.13-2.24.16-3.13.79-.81.56-1.38 1.42-1.5 2.39-.14 1.15.35 2.34 1.19 3.14.88.82 2.14 1.12 3.33.86 1.15-.25 2.14-1.05 2.58-2.12.21-.51.3-1.07.3-1.62l.01-16.54h3.28z"></path></svg>
+              </a>
+              <a href="#" className="hover:text-white transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+            </div>
+
+            <div className="text-center md:text-center mt-6 md:mt-0">
+              2026 LIYARA Clothing.All right reserved
+            </div>
+
+            <div className="flex justify-start md:justify-end mt-6 md:mt-0">
+              <button className="text-white font-bold flex items-center gap-2 bg-transparent border-none text-[0.75rem] tracking-wider hover:text-gray-300 transition-colors uppercase" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                SCROLL TOP
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="17 11 12 6 7 11"></polyline>
+                  <polyline points="17 18 12 13 7 18"></polyline>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-8 mb-8 flex-wrap gap-8">
-          <div className="flex items-center gap-3 text-[0.9rem]">
-            <span className="email-icon">📧</span>
-            <a href="mailto:liyaracloathing@gmail.com" className="hover:underline">liyaracloathing@gmail.com</a>
-          </div>
-
-          <nav className="flex gap-8 flex-wrap">
-            <a href="/about" className="text-[0.8rem] font-semibold opacity-70 hover:opacity-100 transition-opacity">About Us</a>
-            <a href="/contact" className="text-[0.8rem] font-semibold opacity-70 hover:opacity-100 transition-opacity">Contact Us</a>
-            <a href="/" className="text-[0.8rem] font-semibold opacity-70 hover:opacity-100 transition-opacity">Home</a>
-            <a href="/trending" className="text-[0.8rem] font-semibold opacity-70 hover:opacity-100 transition-opacity">Trending</a>
-          </nav>
-        </div>
-
-        <div className="text-center my-16">
-          <h1 className="text-[clamp(5rem,20vw,15rem)] font-extrabold tracking-[0.2em] leading-[0.8] text-white m-0 font-outfit">LIYARA</h1>
-        </div>
-
-        <div className="flex flex-col md:flex-row justify-between items-center text-[0.7rem] opacity-60 flex-wrap gap-6">
-          <div className="flex gap-6 text-[1.2rem]">
-            <a href="#" className="hover:text-[#ff3e3e] transition-colors"><i className="fab fa-facebook"></i></a>
-            <a href="#" className="hover:text-[#ff3e3e] transition-colors"><i className="fab fa-youtube"></i></a>
-            <a href="#" className="hover:text-[#ff3e3e] transition-colors"><i className="fab fa-tiktok"></i></a>
-            <a href="#" className="hover:text-[#ff3e3e] transition-colors"><i className="fab fa-instagram"></i></a>
-          </div>
-
-          <div className="copyright">
-            2026 LIYARA Clothing. All rights reserved
-          </div>
-
-          <button className="text-white font-bold flex items-center gap-2 bg-transparent border-none" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            SCROLL TOP <span>↑</span>
-          </button>
-        </div>
       </div>
     </footer>
   );
 };
 
 export default Footer;
+
 

@@ -15,6 +15,8 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         outfit: ['Outfit', 'sans-serif'],
+        hanken: ['"Hanken Grotesk"', 'sans-serif'],
+        space: ['"Space Grotesk"', 'sans-serif'],
       },
       maxWidth: {
         'max-width': '1440px',

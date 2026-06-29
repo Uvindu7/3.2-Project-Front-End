@@ -1,10 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductSection from '../home/ProductSection';
+import TwoDProductCard from './2DProductCard';
+import ThreeDProductCard from './3DProductCard';
+import TShirtModel from './TShirtModel';
+import SizeButton from './SizeButton';
 
-const ProductDetails = ({ onBack }) => {
+// SVG icon shown on the "3D INTERACTIVE" badge
+const Icon3D = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+    <path d="M2 17l10 5 10-5" />
+    <path d="M2 12l10 5 10-5" />
+  </svg>
+);
+
+// SVG icon shown on the "BACK TO 2D" badge
+const Icon2D = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
+  </svg>
+);
+
+const ProductDetails = () => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('Deep Charcoal');
+  const [is3D, setIs3D] = useState(false);
 
   const colors = [
     { name: 'Black', hex: '#111' },
@@ -12,42 +37,46 @@ const ProductDetails = ({ onBack }) => {
     { name: 'Deep Charcoal', hex: '#333' }
   ];
 
-  const sizes = ['S', 'M', 'L', 'XL'];
-
   return (
     <div className="pt-32 pb-20 bg-white">
       <div className="container">
-        <div className="mb-8">
-          <button className="flex items-center gap-2 text-[0.85rem] text-[#666] font-medium transition-all duration-300 ease-custom hover:text-[#111] hover:-translate-x-1 border-none bg-transparent" onClick={onBack}>
+        <div className="mb-4">
+          <button className="flex items-center gap-2 text-[0.85rem] text-[#666] font-medium transition-all duration-300 ease-custom hover:text-[#111] hover:-translate-x-1 border-none bg-transparent" onClick={() => navigate(-1)}>
             <span>←</span> Back to Browse
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-start mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6 items-start mb-12">
           {/* Product Image Section */}
-          <div className="w-full">
-            <div className="bg-[#f7f7f7] rounded-[20px] p-8 md:p-16 relative aspect-square flex items-center justify-center overflow-hidden group">
-              <span className="absolute top-6 right-6 bg-black/80 text-white px-4 py-2 rounded-full text-[0.7rem] font-bold tracking-wider flex items-center gap-2 backdrop-blur-md z-10">
-                <span className="icon">🎮</span> 3D INTERACTIVE
-              </span>
-              <img 
-                src="/images/charcoal-tee.png" 
-                alt="Comfort Fit Crew Neck T Shirt" 
-                className="max-w-full max-h-full object-contain transition-transform duration-500 ease-custom group-hover:scale-105"
-              />
-            </div>
-          </div>
+          {is3D ? (
+            <ThreeDProductCard
+              Model={TShirtModel}
+              badge="BACK TO 2D"
+              badgeIcon={Icon2D}
+              onBadgeClick={() => setIs3D(false)}
+            />
+          ) : (
+            <TwoDProductCard
+              src="/images/charcoal-tee.png"
+              alt="Comfort Fit Crew Neck T Shirt"
+              badge="3D INTERACTIVE"
+              badgeIcon={Icon3D}
+              onBadgeClick={() => setIs3D(true)}
+            />
+          )}
 
           {/* Product Info Section */}
-          <div className="flex flex-col gap-6">
-            <span className="text-[0.75rem] font-bold text-[#888] tracking-[0.1em]">POPULAR MENS</span>
-            <h1 className="text-[2.2rem] font-extrabold leading-[1.2] text-[#111] font-outfit">Comfort Fit Crew Neck T Shirt</h1>
-            <h2 className="text-2xl font-bold text-[#111] -mt-2">RS 2900.00</h2>
+          <div className="flex flex-col gap-4">
+            <span className="text-[0.9rem] font-bold text-[#888] tracking-[0.1em]">POPULAR MENS</span>
+            <div className="grid grid-cols-1 gap-5">
+              <h1 className="text-[1.76rem] font-extrabold leading-[1.2] text-[#111] font-hanken">Comfort Fit Crew Neck T-Shirt</h1>
+              <h2 className="text-2xl font-regular text-[#111] -mt-2">RS 2900.00</h2>
+            </div>
 
             <p className="text-[#666] text-[0.95rem] leading-relaxed mt-4 font-sans">
-              Manufactured from 240GSM heavyweight organic cotton. 
-              A structured drape meets effortless comfort. 
-              Features a reinforced ribbed collar and a slightly dropped shoulder for 
+              Manufactured from 240GSM heavyweight organic cotton.
+              A structured drape meets effortless comfort.
+              Features a reinforced ribbed collar and a slightly dropped shoulder for
               a modern, architectural silhouette.
             </p>
 
@@ -55,7 +84,7 @@ const ProductDetails = ({ onBack }) => {
               <span className="text-[0.8rem] font-bold text-[#333]">COLOR: {selectedColor.toUpperCase()}</span>
               <div className="flex gap-3">
                 {colors.map(color => (
-                  <button 
+                  <button
                     key={color.name}
                     className={`w-8 h-8 rounded-full border border-transparent transition-all duration-300 ease-custom relative ${selectedColor === color.name ? 'border-[#111] shadow-[inset_0_0_0_2px_white]' : ''}`}
                     style={{ backgroundColor: color.hex }}
@@ -72,15 +101,10 @@ const ProductDetails = ({ onBack }) => {
                 <button className="text-[0.75rem] text-[#666] underline font-medium border-none bg-transparent">Size Guide</button>
               </div>
               <div className="grid grid-cols-4 gap-3">
-                {sizes.map(size => (
-                  <button 
-                    key={size}
-                    className={`p-3 border-[1.5px] border-[#eee] rounded-lg font-semibold text-[0.85rem] transition-all duration-300 ease-custom ${selectedSize === size ? 'border-[#111] bg-[#f9f9f9]' : 'hover:border-[#333]'}`}
-                    onClick={() => setSelectedSize(size)}
-                  >
-                    {size}
-                  </button>
-                ))}
+                <SizeButton size="S" selectedSize={selectedSize} onClick={setSelectedSize} />
+                <SizeButton size="M" selectedSize={selectedSize} onClick={setSelectedSize} />
+                <SizeButton size="L" selectedSize={selectedSize} onClick={setSelectedSize} />
+                <SizeButton size="XL" selectedSize={selectedSize} onClick={setSelectedSize} />
               </div>
             </div>
 
@@ -111,21 +135,21 @@ const ProductDetails = ({ onBack }) => {
         </div>
 
         {/* Recommendation Sections */}
-        <div className="flex flex-col gap-16">
-          <ProductSection 
-            title="SMART RECOMMENDATIONS" 
-            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
-            onProductClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+        <div className="flex flex-col gap-3">
+          <ProductSection
+            title="SMART RECOMMENDATIONS"
+            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
+            onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
-          <ProductSection 
-            title="RELATED PRODUCTS" 
-            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
-            onProductClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+          <ProductSection
+            title="RELATED PRODUCTS"
+            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
+            onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
-          <ProductSection 
-            title="RECENTLY VIEWED PRODUCTS" 
-            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!" 
-            onProductClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+          <ProductSection
+            title="RECENTLY VIEWED PRODUCTS"
+            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
+            onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
         </div>
       </div>
