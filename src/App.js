@@ -11,6 +11,7 @@ import ProductDetails from './components/product/ProductDetails';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Contact from './components/contact/Contact';
+import Shop from './components/shop/Shop';
 
 function App() {
   return (
@@ -30,5 +31,3 @@ function App() {
 }
 
 export default App;
-
-

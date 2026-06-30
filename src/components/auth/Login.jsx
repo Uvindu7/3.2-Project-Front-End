@@ -1,8 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../../lib/api';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const { email, password } = formData;
+
+  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      console.log('Login Success:', res.data);
+      
+      // Store token in localStorage
+      localStorage.setItem('token', res.data.token);
+      
+      alert('Login successful!');
+      navigate('/');
+    } catch (err) {
+      console.error('Login Error:', err.response?.data || err.message);
+      alert(err.response?.data?.message || 'Invalid credentials. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-20 relative overflow-hidden">
@@ -29,11 +59,14 @@ const Login = () => {
             <p className="text-text-muted text-sm tracking-wide uppercase">Login to your account</p>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-text-muted tracking-[2px] uppercase px-1">Email Address</label>
               <input 
                 type="email" 
+                name="email"
+                value={email}
+                onChange={onChange}
                 placeholder="hello@example.com"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
@@ -47,6 +80,9 @@ const Login = () => {
               </div>
               <input 
                 type="password" 
+                name="password"
+                value={password}
+                onChange={onChange}
                 placeholder="••••••••"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
@@ -60,9 +96,10 @@ const Login = () => {
 
             <button 
               type="submit"
-              className="w-full bg-black text-white rounded-2xl py-5 text-xs font-bold tracking-[3px] uppercase hover:bg-neutral-800 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-black/10"
+              disabled={loading}
+              className="w-full bg-black text-white rounded-2xl py-5 text-xs font-bold tracking-[3px] uppercase hover:bg-neutral-800 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-black/10 disabled:opacity-50"
             >
-              Sign In
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 

@@ -1,6 +1,6 @@
 import ProductCard from './ProductCard';
 
-const ProductSection = ({ title, description }) => {
+const ProductSection = ({ id, title, description }) => {
   const products = [
     { id: 1, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
     { id: 2, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
@@ -9,7 +9,7 @@ const ProductSection = ({ title, description }) => {
   ];
 
   return (
-    <section className="py-6">
+    <section id={id} className="py-16">
       <div className="container">
         <div className="mb-3 max-w-[600px]">
           <h2 className="text-[2rem] font-bold text-[#111] mb-2 font-outfit">{title}</h2>
