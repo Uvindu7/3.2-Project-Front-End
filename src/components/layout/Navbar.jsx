@@ -13,7 +13,7 @@ const Navbar = () => {
             HOME
           </Link>
           <Link
-            to="/fashion"
+            to="/shop"
             className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors"
           >
             TRENDING
@@ -25,7 +25,7 @@ const Navbar = () => {
             CONTACT
           </Link>
           <Link
-            to="/about"
+            to="/fashion"
             className="text-[12px] font-semibold text-text-muted tracking-wider hover:text-text-main transition-colors"
           >
             ABOUT US
