@@ -1,62 +1,61 @@
 import React from "react";
-import "./PrecisionSection.css";
 
 // Replace with your actual image path (the raglan t-shirt image from the mockup)
 import tshirtImage from "../../assets/images/tshirt.jpg"; 
 
 function PrecisionSection() {
   return (
-    <section className="precision-section">
+    <section className="flex flex-col-reverse lg:flex-row items-center justify-between gap-16 px-8 py-16 lg:px-24 lg:py-16 font-sans bg-white max-w-[1440px] mx-auto box-border">
       {/* Left Column: Text & Parameter Grid */}
-      <div className="precision-left">
-        <span className="precision-tagline">TAILORED INTELLIGENCE</span>
+      <div className="flex-1 max-w-full lg:max-w-[500px] w-full">
+        <span className="text-blue-600 font-semibold text-sm tracking-widest uppercase block mb-3">TAILORED INTELLIGENCE</span>
         
-        <h2 className="precision-heading">The Precision Fit.</h2>
+        <h2 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">The Precision Fit.</h2>
         
-        <p className="precision-description">
+        <p className="text-gray-600 text-base leading-relaxed mb-10">
           No more guesswork. Input your unique body parameters and let our AI 
           determine your perfect silhouette across our entire collection.
         </p>
 
         {/* Measurement Grid */}
-        <div className="parameter-grid">
-          <div className="parameter-card">
-            <span className="param-icon">⚿</span> {/* Replace with your own SVG/Icon library */}
-            <span className="param-label">Chest Width</span>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-3 border border-gray-200 rounded-md p-4 bg-white cursor-pointer transition-all duration-200 hover:border-gray-400 hover:shadow-sm">
+            <span className="text-gray-800 text-xl flex items-center justify-center w-6">⚿</span>
+            <span className="text-gray-900 text-[0.95rem] font-medium">Chest Width</span>
           </div>
-          <div className="parameter-card">
-            <span className="param-icon">↕</span>
-            <span className="param-label">Upper Body Length</span>
+          <div className="flex items-center gap-3 border border-gray-200 rounded-md p-4 bg-white cursor-pointer transition-all duration-200 hover:border-gray-400 hover:shadow-sm">
+            <span className="text-gray-800 text-xl flex items-center justify-center w-6">↕</span>
+            <span className="text-gray-900 text-[0.95rem] font-medium">Upper Body Length</span>
           </div>
-          <div className="parameter-card">
-            <span className="param-icon">📐</span>
-            <span className="param-label">Shoulder Width</span>
+          <div className="flex items-center gap-3 border border-gray-200 rounded-md p-4 bg-white cursor-pointer transition-all duration-200 hover:border-gray-400 hover:shadow-sm">
+            <span className="text-gray-800 text-xl flex items-center justify-center w-6">📐</span>
+            <span className="text-gray-900 text-[0.95rem] font-medium">Shoulder Width</span>
           </div>
-          <div className="parameter-card">
-            <span className="param-icon">◯</span>
-            <span className="param-label">Neck Size</span>
+          <div className="flex items-center gap-3 border border-gray-200 rounded-md p-4 bg-white cursor-pointer transition-all duration-200 hover:border-gray-400 hover:shadow-sm">
+            <span className="text-gray-800 text-xl flex items-center justify-center w-6">◯</span>
+            <span className="text-gray-900 text-[0.95rem] font-medium">Neck Size</span>
           </div>
-          <div className="parameter-card full-width">
-            <span className="param-icon">⚬—⚬</span>
-            <span className="param-label">Sleeve Length</span>
+          <div className="col-span-2 flex items-center gap-3 border border-gray-200 rounded-md p-4 bg-white cursor-pointer transition-all duration-200 hover:border-gray-400 hover:shadow-sm">
+            <span className="text-gray-800 text-xl flex items-center justify-center w-6">⚬—⚬</span>
+            <span className="text-gray-900 text-[0.95rem] font-medium">Sleeve Length</span>
           </div>
         </div>
       </div>
 
       {/* Right Column: Visual Preview */}
-      <div className="precision-right">
-        <div className="image-container">
+      <div className="flex-[1.2] flex items-center justify-center w-full">
+        <div className="relative w-full max-h-[350px] lg:max-h-[420px] rounded overflow-hidden flex">
           <img 
             src={tshirtImage} 
             alt="The Precision Fit Showcase" 
-            className="showcase-img"
+            className="w-full h-full object-cover object-center"
           />
           {/* Subtle sparkles icon in the bottom right corner */}
-          <div className="sparkle-overlay">✦</div>
+          <div className="absolute bottom-4 right-4 text-gray-400 text-xl pointer-events-none">✦</div>
         </div>
       </div>
     </section>
   );
 }
 
-export default PrecisionSection;
+export default PrecisionSection;

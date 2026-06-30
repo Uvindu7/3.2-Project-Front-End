@@ -50,7 +50,7 @@ const Navbar = () => {
               </svg>
             </button>
 
-            <button className="signin-btn">SIGN IN</button>
+            <button className="signin-btn">Search </button>
           </div>
           <Link
             to="/login"

@@ -1,5 +1,4 @@
 import React from "react";
-import "./FeatureSection.css";
 
 import texture from "../../assets/images/texture.jpg";
 import model from "../../assets/images/model.jpg";
@@ -25,33 +24,34 @@ const cards = [
 
 function FeatureSection() {
   return (
-    <section className="feature-section">
+    <section className="w-full bg-white px-8 py-12 lg:px-20 lg:py-16">
 
-      <div className="feature-top">
+      <div className="mb-[35px]">
 
-        <h2>Interactive Realism</h2>
+        <h2 className="text-[24px] lg:text-[28px] text-[#111] mb-[12px] font-bold">Interactive Realism</h2>
 
-        <p>
+        <p className="text-[#666] text-[13px] lg:text-[14px] leading-[1.7] max-w-[720px]">
           Experience fashion beyond static images with physically
           accurate rendering and immersive interaction.
         </p>
 
       </div>
 
-      <div className="feature-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[25px]">
 
         {cards.map((item, index) => (
 
-          <div className="feature-card" key={index}>
+          <div className="bg-white" key={index}>
 
             <img
               src={item.image}
               alt={item.title}
+              className="w-full h-[240px] md:h-[300px] lg:h-[260px] object-cover block"
             />
 
-            <h3>{item.title}</h3>
+            <h3 className="mt-[18px] text-[18px] text-[#111]">{item.title}</h3>
 
-            <p>{item.text}</p>
+            <p className="mt-[10px] text-[14px] text-[#666] leading-[1.7]">{item.text}</p>
 
           </div>
 

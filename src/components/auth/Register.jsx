@@ -1,8 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../../lib/api';
 
-const Register = ({ onLoginClick, onBackClick }) => {
+const Register = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const { username, email, password, confirmPassword } = formData;
+
+  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/register', { username, email, password });
+      console.log('Registration Success:', res.data);
+      alert('Registration successful! Please login.');
+      navigate('/login');
+    } catch (err) {
+      console.error('Registration Error:', err.response?.data || err.message);
+      alert(err.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-20 relative overflow-hidden">
@@ -29,11 +62,14 @@ const Register = ({ onLoginClick, onBackClick }) => {
             <p className="text-text-muted text-sm tracking-wide uppercase">Create your new account</p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-text-muted tracking-[2px] uppercase px-1">Full Name</label>
               <input 
                 type="text" 
+                name="username"
+                value={username}
+                onChange={onChange}
                 placeholder="John Doe"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
@@ -44,6 +80,9 @@ const Register = ({ onLoginClick, onBackClick }) => {
               <label className="text-[10px] font-bold text-text-muted tracking-[2px] uppercase px-1">Email Address</label>
               <input 
                 type="email" 
+                name="email"
+                value={email}
+                onChange={onChange}
                 placeholder="hello@example.com"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
@@ -54,6 +93,9 @@ const Register = ({ onLoginClick, onBackClick }) => {
               <label className="text-[10px] font-bold text-text-muted tracking-[2px] uppercase px-1">Password</label>
               <input 
                 type="password" 
+                name="password"
+                value={password}
+                onChange={onChange}
                 placeholder="Min. 8 characters"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
@@ -64,6 +106,9 @@ const Register = ({ onLoginClick, onBackClick }) => {
               <label className="text-[10px] font-bold text-text-muted tracking-[2px] uppercase px-1">Confirm Password</label>
               <input 
                 type="password" 
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={onChange}
                 placeholder="••••••••"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
@@ -79,9 +124,10 @@ const Register = ({ onLoginClick, onBackClick }) => {
 
             <button 
               type="submit"
-              className="w-full bg-black text-white rounded-2xl py-5 text-xs font-bold tracking-[3px] uppercase hover:bg-neutral-800 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-black/10 mt-2"
+              disabled={loading}
+              className="w-full bg-black text-white rounded-2xl py-5 text-xs font-bold tracking-[3px] uppercase hover:bg-neutral-800 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-black/10 mt-2 disabled:opacity-50"
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
