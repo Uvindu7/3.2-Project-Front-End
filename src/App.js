@@ -18,9 +18,13 @@ import CheckoutPage from './components/checkout/CheckoutPage';
 // Cart Context
 import { CartProvider } from './context/CartContext';
 
+import { AuthProvider } from './context/AuthContext';
+import Profile from './components/auth/Profile';
+
 function App() {
   return (
     <CartProvider>
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route element={<MainLayout />}>
@@ -33,10 +37,13 @@ function App() {
             <Route path="/shop" element={<Shop />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>
     </CartProvider>
+            
+    </AuthProvider>
   );
 }
 
