@@ -5,25 +5,19 @@ const slides = [
   {
     headline1: "EXPERIENCE FASHION",
     headline2: "BEYOND IMAGES",
-    cta1: "EXPLORE ALL",
     cta2: "SHOP NOW",
-    link1: "/fashion",
     link2: "/shop",
   },
   {
     headline1: "DISCOVER THE STYLE",
     headline2: "LIKE NEVER BEFORE",
-    cta1: "EXPLORE ALL",
     cta2: "SHOP NOW",
-    link1: "/fashion",
     link2: "/shop",
   },
   {
     headline1: "UNLEASH YOUR COMFORT",
     headline2: "UNRESTRICTED STYLE",
-    cta1: "EXPLORE ALL",
     cta2: "SHOP NOW",
-    link1: "/fashion",
     link2: "/shop",
   },
 ];
@@ -101,9 +95,6 @@ export default function Hero() {
 
         {/* Buttons */}
         <div className="test-hero__actions">
-          <Link to={slide.link1} id="test-hero-explore" className="test-hero__btn test-hero__btn--outline">
-            {slide.cta1}
-          </Link>
           <Link to={slide.link2} id="test-hero-book" className="test-hero__btn test-hero__btn--filled">
             {slide.cta2}
           </Link>
