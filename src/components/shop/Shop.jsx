@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SidebarFilters from './SidebarFilters';
 import ProductGrid from './ProductGrid';
 import RecentlyViewed from './RecentlyViewed';
+import { useCart } from '../../context/CartContext';
 
 const Shop = ({ onProductClick }) => {
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   // Filter & Sort State
   const [activeCategory, setActiveCategory] = useState('All Collection');
   const [selectedSizes, setSelectedSizes] = useState([]);
@@ -37,8 +41,13 @@ const Shop = ({ onProductClick }) => {
   };
 
   const handleQuickAdd = (product) => {
-    console.log('Quick Add:', product);
-    // You can implement cart logic here
+    addToCart({
+      ...product,
+      size: 'M',
+      color: product.color || 'Default',
+      collection: 'LIYARA',
+    });
+    navigate('/cart');
   };
 
   return (
