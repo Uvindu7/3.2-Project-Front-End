@@ -14,6 +14,9 @@ import Contact from './components/contact/Contact';
 import Shop from './components/shop/Shop';
 import CartPage from './components/cart/CartPage';
 import CheckoutPage from './components/checkout/CheckoutPage';
+import MensPage from './MensPage';
+import WomensPage from './WomensPage';
+import KidsPage from './KidsPage';
 
 // Cart Context
 import { CartProvider } from './context/CartContext';
@@ -38,6 +41,9 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/mens" element={<MensPage />} />
+            <Route path="/womens" element={<WomensPage />} />
+            <Route path="/kids" element={<KidsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
