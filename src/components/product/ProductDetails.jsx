@@ -1,5 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 import ProductSection from '../home/ProductSection';
 import TwoDProductCard from './2DProductCard';
 import ThreeDProductCard from './3DProductCard';
@@ -26,6 +27,7 @@ const Icon2D = (
 
 const ProductDetails = () => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('Deep Charcoal');
@@ -114,7 +116,22 @@ const ProductDetails = () => {
                 <span className="px-4 font-bold min-w-[40px] text-center">{quantity}</span>
                 <button className="px-5 py-3 text-xl text-[#333] border-none bg-transparent" onClick={() => setQuantity(quantity + 1)}>+</button>
               </div>
-              <button className="flex-1 bg-black text-white rounded-lg font-bold text-[0.9rem] tracking-wider flex items-center justify-center gap-3">
+              <button
+                onClick={() => {
+                  addToCart({
+                    id: 'product-crew-neck',
+                    name: 'Comfort Fit Crew Neck T-Shirt',
+                    price: 2900,
+                    image: '/images/charcoal-tee.png',
+                    collection: 'POPULAR MENS',
+                    color: selectedColor,
+                    size: selectedSize,
+                    quantity,
+                  });
+                  navigate('/cart');
+                }}
+                className="flex-1 bg-black text-white rounded-lg font-bold text-[0.9rem] tracking-wider flex items-center justify-center gap-3"
+              >
                 ADD TO CART <span>🛒</span>
               </button>
             </div>

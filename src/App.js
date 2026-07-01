@@ -12,22 +12,31 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Contact from './components/contact/Contact';
 import Shop from './components/shop/Shop';
+import CartPage from './components/cart/CartPage';
+import CheckoutPage from './components/checkout/CheckoutPage';
+
+// Cart Context
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/fashion" element={<FashionPage />} />
-          <Route path="/product" element={<ProductDetails />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/shop" element={<Shop />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/fashion" element={<FashionPage />} />
+            <Route path="/product" element={<ProductDetails />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 const Navbar = () => {
+  const { cartCount } = useCart();
+
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[1200px] bg-white/70 backdrop-blur-xl border border-white/30 rounded-[50px] z-[1000] shadow-md">
       <div className="flex justify-between items-center h-[60px] px-6">
@@ -52,6 +55,34 @@ const Navbar = () => {
 
             <button className="signin-btn">Search </button>
           </div>
+
+          {/* Cart Icon */}
+          <Link
+            to="/cart"
+            className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 transition-colors"
+            aria-label="Cart"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center leading-none">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
+          </Link>
+
           <Link
             to="/login"
             className="bg-[#333] text-white px-5 py-2 rounded-[20px] text-[12px] font-semibold hover:bg-black transition-colors no-underline"
@@ -65,5 +96,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
