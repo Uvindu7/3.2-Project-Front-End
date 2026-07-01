@@ -464,7 +464,7 @@
   position: relative;
   width: calc(100% - 32px);
   margin: 16px auto;
-  min-height: calc(80vh - 32px);
+  min-height: calc(100vh - 32px);
   border-radius: 32px;
   display: flex;
   flex-direction: column;
