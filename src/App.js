@@ -23,8 +23,8 @@ import Profile from './components/auth/Profile';
 
 function App() {
   return (
-    <CartProvider>
     <AuthProvider>
+    <CartProvider>
       <BrowserRouter>
         <Routes>
           <Route element={<MainLayout />}>
@@ -42,7 +42,6 @@ function App() {
         </Routes>
       </BrowserRouter>
     </CartProvider>
-            
     </AuthProvider>
   );
 }

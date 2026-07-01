@@ -1,47 +1,137 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const Hero = () => {
+const slides = [
+  {
+    headline1: "EXPERIENCE FASHION",
+    headline2: "BEYOND IMAGES",
+    cta1: "EXPLORE ALL",
+    cta2: "SHOP NOW",
+    link1: "/fashion",
+    link2: "/shop",
+  },
+  {
+    headline1: "DISCOVER THE STYLE",
+    headline2: "LIKE NEVER BEFORE",
+    cta1: "EXPLORE ALL",
+    cta2: "SHOP NOW",
+    link1: "/fashion",
+    link2: "/shop",
+  },
+  {
+    headline1: "UNLEASH YOUR COMFORT",
+    headline2: "UNRESTRICTED STYLE",
+    cta1: "EXPLORE ALL",
+    cta2: "SHOP NOW",
+    link1: "/fashion",
+    link2: "/shop",
+  },
+];
+
+export default function Hero() {
+  const [current, setCurrent] = useState(0);
+  const [animating, setAnimating] = useState(false);
+
+  // Auto-advance
+  useEffect(() => {
+    const timer = setInterval(() => {
+      goNext();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [current, animating]);
+
+  const goNext = () => {
+    if (animating) return;
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+      setAnimating(false);
+    }, 350);
+  };
+
+  const goPrev = () => {
+    if (animating) return;
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+      setAnimating(false);
+    }, 350);
+  };
+
+  const slide = slides[current];
+
   return (
-    <section className="pt-[10rem] pb-20 bg-[radial-gradient(circle_at_top_right,#f0f7ff_0%,#ffffff_50%)] min-h-[90vh] flex items-center">
-      <div className="container flex flex-col items-center text-center gap-12">
-        <div className="hero-content">
-          <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.1] font-extrabold text-[#111] font-outfit">
-            EXPERIENCE FASHION <br />
-            <span className="font-light text-[#666] font-sans normal-case block mt-2">BEYOND IMAGES</span>
-          </h1>
+    <section
+      id="test-hero"
+      className="test-hero"
+      aria-label="Hero section"
+    >
+      {/* ── Background decorative border frame ── */}
+      <div className="test-hero__frame" aria-hidden="true">
+        <div className="test-hero__frame-inner" />
+      </div>
 
-          <div className="flex flex-col md:flex-row gap-6 mt-12 justify-center w-full md:w-auto items-center">
-            <Link to="/fashion" className="px-10 py-4 rounded-[40px] font-bold text-[0.9rem] tracking-[0.08em] transition-all duration-300 ease-custom min-w-[180px] flex items-center justify-center border border-[#ddd] bg-white text-[#333] hover:-translate-y-0.5 hover:shadow-lg w-full md:w-auto no-underline">EXPLORE ALL</Link>
-            <Link to="/product" className="px-10 py-4 rounded-[40px] font-bold text-[0.9rem] tracking-[0.08em] transition-all duration-300 ease-custom min-w-[180px] flex items-center justify-center bg-[#333] text-white hover:-translate-y-0.5 hover:shadow-lg w-full md:w-auto no-underline">SHOP NOW</Link>
-          </div>
+      {/* ── Side nav arrows ── */}
+      <button
+        id="test-hero-prev"
+        className="test-hero__arrow test-hero__arrow--left"
+        onClick={goPrev}
+        aria-label="Previous slide"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+      <button
+        id="test-hero-next"
+        className="test-hero__arrow test-hero__arrow--right"
+        onClick={goNext}
+        aria-label="Next slide"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </button>
+
+      {/* ── Main content ── */}
+      <div className={`test-hero__content ${animating ? "test-hero__content--exit" : "test-hero__content--enter"}`}>
+        {/* Headline */}
+        <h1 className="test-hero__headline1">{slide.headline1}</h1>
+        <p className="test-hero__headline2">{slide.headline2}</p>
+
+        {/* Buttons */}
+        <div className="test-hero__actions">
+          <Link to={slide.link1} id="test-hero-explore" className="test-hero__btn test-hero__btn--outline">
+            {slide.cta1}
+          </Link>
+          <Link to={slide.link2} id="test-hero-book" className="test-hero__btn test-hero__btn--filled">
+            {slide.cta2}
+          </Link>
         </div>
+      </div>
 
-        <div className="w-full max-w-[1000px] relative">
-          <div className="flex items-center justify-center gap-2 md:gap-8">
-            <div className="hidden md:flex w-10 h-10 rounded-full border border-[#eee] items-center justify-center text-[#999] cursor-pointer bg-white transition-all duration-300 ease-custom hover:bg-[#f5f5f5] hover:text-[#333] hover:border-[#ccc]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </div>
+      {/* ── 3D Product / Character image ── */}
+      <div className="test-hero__product-wrap">
+        <div className="test-hero__product-shadow" aria-hidden="true" />
+        <img
+          src="/images/hero-hoodie.png"
+          alt="3D Fashion Experience"
+          className="test-hero__product-img"
+        />
+      </div>
 
-            <div className="bg-white rounded-xl p-4 w-full max-w-[600px] aspect-[16/10] flex items-center justify-center shadow-[0_30px_60px_rgba(0,0,0,0.05)] overflow-hidden group">
-              <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                <img src="/images/hero-hoodie.png" alt="Neo Nature Hoodie" className="max-h-full object-contain transition-all duration-300 ease-custom group-hover:scale-105" />
-              </div>
-            </div>
-
-            <div className="hidden md:flex w-10 h-10 rounded-full border border-[#eee] items-center justify-center text-[#999] cursor-pointer bg-white transition-all duration-300 ease-custom hover:bg-[#f5f5f5] hover:text-[#333] hover:border-[#ccc]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </div>
-          </div>
-        </div>
+      {/* ── Slide dots ── */}
+      <div className="test-hero__dots" aria-label="Slide indicators">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            id={`test-hero-dot-${i}`}
+            className={`test-hero__dot ${i === current ? "test-hero__dot--active" : ""}`}
+            onClick={() => setCurrent(i)}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
       </div>
     </section>
   );
-};
-
-export default Hero;
-
+}
