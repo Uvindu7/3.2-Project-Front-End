@@ -20,6 +20,10 @@
     --font-manrope: 'Manrope', sans-serif;
   }
 
+  html, body {
+    overscroll-behavior-y: none;
+  }
+
   body {
     font-family: theme('fontFamily.sans');
     background-color: #fcfcfc;
@@ -460,14 +464,14 @@
   position: relative;
   width: calc(100% - 32px);
   margin: 16px auto;
-  min-height: calc(100vh - 32px);
+  min-height: calc(80vh - 32px);
   border-radius: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 90px 60px 60px;
-  overflow: hidden;
+  overflow: visible;
   /* Inner blue-grey gradient fading to white at bottom */
   background: linear-gradient(160deg,
       #cdd9e4 0%,
