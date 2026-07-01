@@ -10,7 +10,9 @@ const SidebarFilters = ({
   availability,
   toggleAvailability,
   fit,
-  toggleFit
+  toggleFit,
+  onApplyFilters,
+  onClearFilters
 }) => {
   const categories = [
     'All Collection',
@@ -233,7 +235,7 @@ const SidebarFilters = ({
         </div>
 
         {/* Fit Filter */}
-        <div>
+        <div className="mb-6">
           <span className="block text-xs font-semibold text-zinc-800 mb-3 uppercase">
             Fit
           </span>
@@ -257,6 +259,22 @@ const SidebarFilters = ({
               <span>Baggy</span>
             </label>
           </div>
+        </div>
+
+        {/* Filter Action Buttons */}
+        <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-col gap-3">
+          <button
+            onClick={onApplyFilters}
+            className="w-full bg-black hover:bg-zinc-800 text-white font-outfit text-xs font-bold tracking-widest py-3 rounded-sm transition-colors duration-200 uppercase"
+          >
+            Apply Filter
+          </button>
+          <button
+            onClick={onClearFilters}
+            className="w-full bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 font-outfit text-xs font-bold tracking-widest py-3 rounded-sm transition-colors duration-200 uppercase"
+          >
+            Clear Filter
+          </button>
         </div>
       </div>
     </aside>
