@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../lib/api';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,18 +12,15 @@ const Login = () => {
 
   const { email, password } = formData;
 
+  const { login } = useAuth();
+
   const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.post('/auth/login', { email, password });
-      console.log('Login Success:', res.data);
-      
-      // Store token in localStorage
-      localStorage.setItem('token', res.data.token);
-      
+      await login(email, password);
       alert('Login successful!');
       navigate('/');
     } catch (err) {
