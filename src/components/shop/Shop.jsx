@@ -14,7 +14,7 @@ const Shop = ({ onProductClick }) => {
 
   // Sample Product Data
   const [products] = useState([
-    { id: 1, name: 'Raglan Tee - Classic White', price: 2900, image: '/images/product-tee.png', category: 'New Arrivals' },
+    { id: 1, name: 'Raglan Tee - Classic White', price: 2900, image: '/images/charcoal-tee.png', category: 'New Arrivals' },
     { id: 2, name: 'Raglan Tee - Deep Black', price: 3200, image: '/images/product-tee.png', category: 'Best Sellers' },
     { id: 3, name: 'Raglan Tee - Charcoal', price: 2800, image: '/images/product-tee.png', category: "Men's Collection" },
     { id: 4, name: 'Raglan Tee - Heather Grey', price: 2700, image: '/images/product-tee.png', category: 'All Collection' },

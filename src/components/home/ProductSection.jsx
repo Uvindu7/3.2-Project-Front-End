@@ -1,12 +1,14 @@
 import ProductCard from './ProductCard';
 
-const ProductSection = ({ id, title, description }) => {
-  const products = [
+const ProductSection = ({ id, title, description, products: initialProducts }) => {
+  const defaultProducts = [
     { id: 1, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
     { id: 2, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
     { id: 3, name: 'Raglan Tee', image: '/images/product-tee.png', added: true },
     { id: 4, name: 'Raglan Tee', image: '/images/product-tee.png', added: false },
   ];
+
+  const products = initialProducts || defaultProducts;
 
   return (
     <section id={id} className="py-16">

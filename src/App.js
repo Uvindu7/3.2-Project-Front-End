@@ -13,21 +13,27 @@ import Register from './components/auth/Register';
 import Contact from './components/contact/Contact';
 import Shop from './components/shop/Shop';
 
+import { AuthProvider } from './context/AuthContext';
+import Profile from './components/auth/Profile';
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/fashion" element={<FashionPage />} />
-          <Route path="/product" element={<ProductDetails />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/shop" element={<Shop />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/fashion" element={<FashionPage />} />
+            <Route path="/product" element={<ProductDetails />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
