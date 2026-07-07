@@ -6,7 +6,7 @@ import MainLayout from './components/layout/MainLayout';
 
 // Pages
 import HomePage from "./HomePage";
-import FashionPage from "./FashionPage";
+import FashionPage from "./components/fashion/FashionPage";
 import ProductDetails from './components/product/ProductDetails';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -23,6 +23,8 @@ import { CartProvider } from './context/CartContext';
 
 import { AuthProvider } from './context/AuthContext';
 import Profile from './components/auth/Profile';
+import ForgotPassword from './components/auth/ForgotPassword';
+import ResetPassword from './components/auth/ResetPassword';
 
 function App() {
   return (
@@ -32,11 +34,14 @@ function App() {
         <Routes>
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/fashion" element={<FashionPage />} />
+            <Route path="/about" element={<FashionPage />} />
+            <Route path="/trending" element={<Shop />} />
             <Route path="/product" element={<ProductDetails />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
