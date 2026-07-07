@@ -35,9 +35,9 @@ const Navbar = () => {
         {/* ── Left: nav links ── */}
         <nav className="test-navbar__left" aria-label="Main navigation">
           <Link to="/" className="test-navbar__link">HOME</Link>
-          <Link to="/shop" className="test-navbar__link">TRENDING</Link>
+          <Link to="/trending" className="test-navbar__link">TRENDING</Link>
           <Link to="/contact" className="test-navbar__link">CONTACT</Link>
-          <Link to="/fashion" className="test-navbar__link">ABOUT US</Link>
+          <Link to="/about" className="test-navbar__link">ABOUT US</Link>
         </nav>
 
         {/* ── Center: \___/ logo trapezoid ── */}

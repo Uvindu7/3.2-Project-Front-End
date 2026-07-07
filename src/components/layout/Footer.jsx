@@ -23,10 +23,10 @@ const Footer = () => {
             </div>
 
             <nav className="flex gap-10 flex-wrap">
-              <a href="/about" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">About Us</a>
-              <a href="/contact" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Contact Us</a>
-              <a href="/" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Home</a>
-              <a href="/trending" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Trending</a>
+              <Link to="/about" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">About Us</Link>
+              <Link to="/contact" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Contact Us</Link>
+              <Link to="/" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Home</Link>
+              <Link to="/trending" className="text-[0.9rem] font-bold text-white hover:text-gray-300 transition-colors">Trending</Link>
             </nav>
           </div>
 
