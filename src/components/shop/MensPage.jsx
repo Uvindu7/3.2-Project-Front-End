@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SidebarFilters from './components/shop/SidebarFilters';
-import ProductGrid from './components/shop/ProductGrid';
-import { useCart } from './context/CartContext';
+import SidebarFilters from './SidebarFilters';
+import ProductGrid from './ProductGrid';
+import { useCart } from '../../context/CartContext';
+
 
 const MensPage = () => {
   const { addToCart } = useCart();

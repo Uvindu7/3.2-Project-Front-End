@@ -14,9 +14,9 @@ import Contact from './components/contact/Contact';
 import Shop from './components/shop/Shop';
 import CartPage from './components/cart/CartPage';
 import CheckoutPage from './components/checkout/CheckoutPage';
-import MensPage from './MensPage';
-import WomensPage from './WomensPage';
-import KidsPage from './KidsPage';
+import MensPage from './components/shop/MensPage';
+import WomensPage from './components/shop/WomensPage';
+import KidsPage from './components/shop/KidsPage';
 
 // Cart Context
 import { CartProvider } from './context/CartContext';
