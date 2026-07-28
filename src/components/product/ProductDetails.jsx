@@ -6,6 +6,8 @@ import TwoDProductCard from './2DProductCard';
 import ThreeDProductCard from './3DProductCard';
 import TShirtModel from './TShirtModel';
 import SizeButton from './SizeButton';
+import ProductReviews from './ProductReviews';
+
 
 // SVG icon shown on the "3D INTERACTIVE" badge
 const Icon3D = (
@@ -150,6 +152,9 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
+
+        {/* Customer Reviews Section */}
+        <ProductReviews productId="product-crew-neck" />
 
         {/* Recommendation Sections */}
         <div className="flex flex-col gap-3">

@@ -9,6 +9,7 @@ const Login = () => {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', isSuccess: false });
 
   const { email, password } = formData;
 
@@ -21,11 +22,17 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
-      alert('Login successful!');
-      navigate('/');
+      setToast({ show: true, message: 'Login successful!', isSuccess: true });
+      setTimeout(() => {
+        setToast({ show: false, message: '', isSuccess: false });
+        navigate('/');
+      }, 1500);
     } catch (err) {
       console.error('Login Error:', err.response?.data || err.message);
-      alert(err.response?.data?.message || 'Invalid credentials. Please try again.');
+      setToast({ show: true, message: err.response?.data?.message || 'Invalid credentials. Please try again.', isSuccess: false });
+      setTimeout(() => {
+        setToast({ show: false, message: '', isSuccess: false });
+      }, 4000);
     } finally {
       setLoading(false);
     }
@@ -33,6 +40,29 @@ const Login = () => {
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-20 relative overflow-hidden">
+      {/* Toast Alert */}
+      {toast.show && (
+        <div className={`fixed top-8 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border transition-all duration-300
+          ${toast.isSuccess 
+            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800' 
+            : 'bg-rose-500/15 border-rose-500/30 text-rose-800'
+          }`}
+        >
+          {toast.isSuccess ? (
+            <svg className="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          ) : (
+            <svg className="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          )}
+          <span className="text-xs font-bold tracking-wider uppercase">{toast.message}</span>
+        </div>
+      )}
+
       {/* Background Decorative Elements */}
       <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-black/5 rounded-full blur-[100px] -z-10 animate-pulse"></div>
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-black/5 rounded-full blur-[120px] -z-10 animate-pulse delay-700"></div>
