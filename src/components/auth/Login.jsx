@@ -21,11 +21,15 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await login(email, password);
+      const data = await login(email, password);
       setToast({ show: true, message: 'Login successful!', isSuccess: true });
       setTimeout(() => {
         setToast({ show: false, message: '', isSuccess: false });
-        navigate('/');
+        if (data.user?.isAdmin) {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/');
+        }
       }, 1500);
     } catch (err) {
       console.error('Login Error:', err.response?.data || err.message);

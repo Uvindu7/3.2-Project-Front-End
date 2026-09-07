@@ -25,6 +25,10 @@ import { AuthProvider } from './context/AuthContext';
 import Profile from './components/auth/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './components/admin/AdminDashboard';
+import AdminUsers from './components/admin/AdminUsers';
+import AdminReviews from './components/admin/AdminReviews';
 
 function App() {
   return (
@@ -49,6 +53,11 @@ function App() {
             <Route path="/mens" element={<MensPage />} />
             <Route path="/womens" element={<WomensPage />} />
             <Route path="/kids" element={<KidsPage />} />
+          </Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="reviews" element={<AdminReviews />} />
           </Route>
         </Routes>
       </BrowserRouter>
