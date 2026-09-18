@@ -1,12 +1,14 @@
-import React, { useState, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import api from '../../lib/api';
 import ProductSection from '../home/ProductSection';
 import TwoDProductCard from './2DProductCard';
 import ThreeDProductCard from './3DProductCard';
 import TShirtModel from './TShirtModel';
 import SizeButton from './SizeButton';
 import ProductReviews from './ProductReviews';
+import ProductCard from '../shop/ProductCard';
 
 
 // SVG icon shown on the "3D INTERACTIVE" badge
@@ -28,18 +30,53 @@ const Icon2D = (
 );
 
 const ProductDetails = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('Deep Charcoal');
   const [is3D, setIs3D] = useState(false);
+  
+  const [product, setProduct] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        const [prodRes, recRes] = await Promise.all([
+          api.get(`/products/${id}`),
+          api.get(`/products/${id}/recommendations`)
+        ]);
+        setProduct(prodRes.data);
+        setRecommendations(recRes.data);
+      } catch (err) {
+        console.error('Failed to fetch product data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (id) {
+      fetchProductData();
+    }
+  }, [id]);
 
   const colors = [
     { name: 'Black', hex: '#111' },
     { name: 'Light Grey', hex: '#ddd' },
     { name: 'Deep Charcoal', hex: '#333' }
   ];
+
+  if (loading) {
+    return <div className="pt-32 pb-20 min-h-screen text-center text-xl">Loading product...</div>;
+  }
+
+  if (!product) {
+    return <div className="pt-32 pb-20 min-h-screen text-center text-xl">Product not found</div>;
+  }
 
   return (
     <div className="pt-32 pb-20 bg-white">
@@ -61,8 +98,8 @@ const ProductDetails = () => {
             />
           ) : (
             <TwoDProductCard
-              src="/images/charcoal-tee.png"
-              alt="Comfort Fit Crew Neck T Shirt"
+              src={product.imageUrl || "/images/charcoal-tee.png"}
+              alt={product.name}
               badge="3D INTERACTIVE"
               badgeIcon={Icon3D}
               onBadgeClick={() => setIs3D(true)}
@@ -71,17 +108,16 @@ const ProductDetails = () => {
 
           {/* Product Info Section */}
           <div className="flex flex-col gap-4">
-            <span className="text-[0.9rem] font-bold text-[#888] tracking-[0.1em]">POPULAR MENS</span>
+            <span className="text-[0.9rem] font-bold text-[#888] tracking-[0.1em]">
+              {product.Category?.name ? product.Category.name.toUpperCase() : 'FASHION'}
+            </span>
             <div className="grid grid-cols-1 gap-5">
-              <h1 className="text-[1.76rem] font-extrabold leading-[1.2] text-[#111] font-hanken">Comfort Fit Crew Neck T-Shirt</h1>
-              <h2 className="text-2xl font-regular text-[#111] -mt-2">RS 2900.00</h2>
+              <h1 className="text-[1.76rem] font-extrabold leading-[1.2] text-[#111] font-hanken">{product.name}</h1>
+              <h2 className="text-2xl font-regular text-[#111] -mt-2">RS {product.price}</h2>
             </div>
 
             <p className="text-[#666] text-[0.95rem] leading-relaxed mt-4 font-sans">
-              Manufactured from 240GSM heavyweight organic cotton.
-              A structured drape meets effortless comfort.
-              Features a reinforced ribbed collar and a slightly dropped shoulder for
-              a modern, architectural silhouette.
+              {product.description || 'A structured drape meets effortless comfort. Features a reinforced ribbed collar and a slightly dropped shoulder for a modern, architectural silhouette.'}
             </p>
 
             <div className="mt-4 flex flex-col gap-4">
@@ -121,11 +157,11 @@ const ProductDetails = () => {
               <button
                 onClick={() => {
                   addToCart({
-                    id: 'product-crew-neck',
-                    name: 'Comfort Fit Crew Neck T-Shirt',
-                    price: 2900,
-                    image: '/images/charcoal-tee.png',
-                    collection: 'POPULAR MENS',
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.imageUrl,
+                    collection: product.Category?.name || 'FASHION',
                     color: selectedColor,
                     size: selectedSize,
                     quantity,
@@ -154,22 +190,33 @@ const ProductDetails = () => {
         </div>
 
         {/* Customer Reviews Section */}
-        <ProductReviews productId="product-crew-neck" />
+        <ProductReviews productId={product.id} />
 
         {/* Recommendation Sections */}
-        <div className="flex flex-col gap-3">
-          <ProductSection
-            title="SMART RECOMMENDATIONS"
-            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
-            onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          />
+        <div className="flex flex-col gap-8 mt-12">
+          {recommendations.length > 0 && (
+            <div>
+              <h2 className="text-[2rem] font-bold text-[#111] mb-2 font-outfit uppercase">Smart Outfit Recommendations</h2>
+              <p className="text-[0.9rem] text-[#666] mb-6">Complete your {product.style} look with these matching items.</p>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                {recommendations.map(rec => (
+                  <ProductCard
+                    key={rec.id}
+                    product={{...rec, image: rec.imageUrl || '/images/product-tee.png'}}
+                    onQuickAdd={(p) => {
+                      addToCart({ ...p, size: 'M', color: 'Default' });
+                      navigate('/cart');
+                    }}
+                    onToggleWishlist={() => {}}
+                    showARIcon={false}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <ProductSection
             title="RELATED PRODUCTS"
-            description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
-            onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          />
-          <ProductSection
-            title="RECENTLY VIEWED PRODUCTS"
             description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
             onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />

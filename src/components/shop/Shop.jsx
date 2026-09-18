@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../lib/api';
 import SidebarFilters from './SidebarFilters';
 import ProductGrid from './ProductGrid';
 import RecentlyViewed from './RecentlyViewed';
@@ -18,15 +19,24 @@ const Shop = ({ onProductClick }) => {
   const [fit, setFit] = useState({ slimFit: false, baggy: false });
   const [sortBy, setSortBy] = useState('featured');
 
-  // Sample Product Data
-  const [products] = useState([
-    { id: 1, name: 'Raglan Tee - Classic White', price: 2900, image: '/images/charcoal-tee.png', category: 'New Arrivals', sizes: ['S', 'M', 'L'] },
-    { id: 2, name: 'Raglan Tee - Deep Black', price: 3200, image: '/images/product-tee.png', category: 'Best Sellers', sizes: ['M', 'L', 'XL'] },
-    { id: 3, name: 'Raglan Tee - Charcoal', price: 2800, image: '/images/product-tee.png', category: "Men's Collection", sizes: ['L', 'XL', 'XXL'] },
-    { id: 4, name: 'Raglan Tee - Heather Grey', price: 2700, image: '/images/product-tee.png', category: 'All Collection', sizes: ['S', 'M', 'XXL'] },
-    { id: 5, name: 'Raglan Tee - Navy Blue', price: 3000, image: '/images/product-tee.png', category: 'New Arrivals', sizes: ['XL', 'XXL', '3XL'] },
-    { id: 6, name: 'Raglan Tee - Forest Green', price: 3100, image: '/images/product-tee.png', category: 'Best Sellers', sizes: ['S', 'M', '3XL'] },
-  ]);
+  // Backend Product Data
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get('/products');
+        setProducts(res.data);
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
 
   const toggleSize = (size) => {
     setSelectedSizes(prev => 
@@ -69,11 +79,6 @@ const Shop = ({ onProductClick }) => {
 
   // Filtered Products
   const filteredProducts = products.filter(product => {
-    // Size filter
-    if (appliedSizes.length > 0) {
-      const hasSize = product.sizes && product.sizes.some(size => appliedSizes.includes(size));
-      if (!hasSize) return false;
-    }
     // Price range filter
     const maxPrice = parseInt(appliedPriceRange.max, 10) || 5000;
     const minPrice = parseInt(appliedPriceRange.min, 10) || 0;
@@ -82,10 +87,26 @@ const Shop = ({ onProductClick }) => {
     }
     // Category filter
     if (activeCategory !== 'All Collection' && activeCategory !== 'Recently Viewed') {
-      if (product.category !== activeCategory) return false;
+      const catName = product.Category?.name?.toLowerCase() || '';
+      const filterName = activeCategory.toLowerCase().replace("'s collection", "").trim();
+      
+      if (!catName.includes(filterName)) return false;
+    }
+    
+    // Availability filter
+    if (availability.inStock && !availability.outOfStock) {
+      if (product.stock <= 0) return false;
+    }
+    if (availability.outOfStock && !availability.inStock) {
+      if (product.stock > 0) return false;
+    }
+    if (!availability.inStock && !availability.outOfStock) {
+      return false;
     }
     return true;
   });
+
+  if (loading) return <div className="pt-32 min-h-screen text-center text-xl">Loading products...</div>;
 
   return (
     <div className="pt-32 pb-20 bg-white min-h-screen">

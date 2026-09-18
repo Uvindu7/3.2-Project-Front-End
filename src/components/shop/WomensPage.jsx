@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../lib/api';
 import SidebarFilters from './SidebarFilters';
 import ProductGrid from './ProductGrid';
 import { useCart } from '../../context/CartContext';
@@ -16,16 +17,47 @@ const WomensPage = () => {
   const [fit, setFit] = useState({ slimFit: false, baggy: false });
   const [sortBy, setSortBy] = useState('featured');
 
-  // Sample Product Data (Filtered for Women)
-  const [products] = useState([
-    { id: 201, name: 'Women’s Essential Tee - White', price: 2900, image: '/images/charcoal-tee.png', category: "Women's Collection" },
-    { id: 202, name: 'Women’s Crop Tee - Lavender', price: 3100, image: '/images/product-tee.png', category: "Women's Collection" },
-    { id: 203, name: 'Women’s Oversized Tee - Beige', price: 3300, image: '/images/product-tee.png', category: "Women's Collection" },
-    { id: 204, name: 'Women’s V-Neck Tee - Black', price: 2800, image: '/images/charcoal-tee.png', category: "Women's Collection" },
-  ]);
+  // Backend Product Data
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get('/products');
+        setProducts(res.data);
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter(product => {
+    const catName = product.Category?.name?.toLowerCase() || '';
+    if (!catName.includes('women')) return false;
+
+    const maxPrice = parseInt(priceRange.max, 10) || 5000;
+    const minPrice = parseInt(priceRange.min, 10) || 0;
+    if (product.price < minPrice || product.price > maxPrice) return false;
+
+    if (availability.inStock && !availability.outOfStock) {
+      if (product.stock <= 0) return false;
+    }
+    if (availability.outOfStock && !availability.inStock) {
+      if (product.stock > 0) return false;
+    }
+    if (!availability.inStock && !availability.outOfStock) {
+      return false;
+    }
+
+    return true;
+  });
 
   const toggleSize = (size) => {
-    setSelectedSizes(prev => 
+    setSelectedSizes(prev =>
       prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
     );
   };
@@ -60,13 +92,17 @@ const WomensPage = () => {
           </div>
 
           <div className="flex-1">
-            <ProductGrid
-              products={products}
-              onQuickAdd={handleQuickAdd}
-              onToggleWishlist={(id) => console.log('Wishlist:', id)}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-            />
+            {loading ? (
+              <div className="text-center text-xl mt-20">Loading products...</div>
+            ) : (
+              <ProductGrid
+                products={filteredProducts}
+                onQuickAdd={handleQuickAdd}
+                onToggleWishlist={(id) => console.log('Wishlist:', id)}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+              />)
+            }
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ const STRIPE_PK =
 const stripePromise = loadStripe(STRIPE_PK);
 
 // ─── Stripe Payment Form ─────────────────────────────────────────────────────
-const PaymentForm = ({ grandTotal, onSuccess }) => {
+const PaymentForm = ({ grandTotal, onSuccess, billing, cartItems }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -26,6 +26,11 @@ const PaymentForm = ({ grandTotal, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
+
+    if (!billing.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billing.email)) {
+      setPaymentError("Please enter a valid email address in the billing details.");
+      return;
+    }
 
     setIsProcessing(true);
     setPaymentError(null);
@@ -42,6 +47,22 @@ const PaymentForm = ({ grandTotal, onSuccess }) => {
       setPaymentError(error.message);
       setIsProcessing(false);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      // Send confirmation email via backend API
+      try {
+        const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        await fetch(`${API}/api/payment/send-receipt`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: billing.email,
+            items: cartItems,
+            grandTotal,
+            transactionId: paymentIntent.id
+          })
+        });
+      } catch (err) {
+        console.error('Failed to send confirmation email', err);
+      }
       onSuccess(paymentIntent);
     } else {
       setIsProcessing(false);
@@ -294,7 +315,8 @@ const CheckoutPage = () => {
                       placeholder={placeholder}
                       value={billing[key]}
                       onChange={(e) => setBilling((b) => ({ ...b, [key]: e.target.value }))}
-                      className="w-full border border-zinc-200 rounded-lg px-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-black transition-colors"
+                      className={`w-full border rounded-lg px-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none transition-colors ${key === 'email' ? 'border-zinc-300 focus:border-black required' : 'border-zinc-200 focus:border-black'}`}
+                      required={key === 'email'}
                     />
                   </div>
                 ))}
@@ -341,7 +363,7 @@ const CheckoutPage = () => {
                 </div>
               ) : clientSecret ? (
                 <Elements stripe={stripePromise} options={stripeOptions}>
-                  <PaymentForm grandTotal={grandTotal} onSuccess={handleSuccess} />
+                  <PaymentForm grandTotal={grandTotal} onSuccess={handleSuccess} billing={billing} cartItems={cartItems} />
                 </Elements>
               ) : null}
             </div>

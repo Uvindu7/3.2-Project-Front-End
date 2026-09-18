@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ProductCard = ({
   product,
@@ -13,6 +14,7 @@ const ProductCard = ({
         className="aspect-[3/4] w-full bg-zinc-100 rounded-sm overflow-hidden relative border border-zinc-100"
         style={{ backgroundColor: product.color || 'transparent' }}
       >
+        <Link to={`/product/${product.id}`} className="w-full h-full block">
         <img
           src={product.image}
           alt={product.name}
@@ -20,6 +22,7 @@ const ProductCard = ({
             product.color ? 'mix-blend-multiply opacity-90' : product.filterClass || ''
           }`}
         />
+        </Link>
 
         {/* Red Dot (Specifically for Product 11) */}
         {product.hasRedDot && (
@@ -63,9 +66,11 @@ const ProductCard = ({
       <div className="mt-3.5 text-left">
         {/* Title & Wishlist Button Row */}
         <div className="flex justify-between items-center">
-          <h3 className="font-outfit text-base font-bold text-zinc-900 tracking-wide">
-            {product.name}
-          </h3>
+          <Link to={`/product/${product.id}`}>
+            <h3 className="font-outfit text-base font-bold text-zinc-900 tracking-wide hover:underline">
+              {product.name}
+            </h3>
+          </Link>
           {/* Heart Wishlist Button */}
           <button
             onClick={() => onToggleWishlist(product.id)}

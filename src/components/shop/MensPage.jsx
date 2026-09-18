@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../lib/api';
 import SidebarFilters from './SidebarFilters';
 import ProductGrid from './ProductGrid';
 import { useCart } from '../../context/CartContext';
@@ -16,16 +17,47 @@ const MensPage = () => {
   const [fit, setFit] = useState({ slimFit: false, baggy: false });
   const [sortBy, setSortBy] = useState('featured');
 
-  // Sample Product Data (Filtered for Men)
-  const [products] = useState([
-    { id: 101, name: 'Men’s Premium Tee - Black', price: 3200, image: '/images/product-tee.png', category: "Men's Collection" },
-    { id: 102, name: 'Men’s Raglan Tee - Navy', price: 2800, image: '/images/product-tee.png', category: "Men's Collection" },
-    { id: 103, name: 'Men’s Slim Fit Tee - Charcoal', price: 3000, image: '/images/charcoal-tee.png', category: "Men's Collection" },
-    { id: 104, name: 'Men’s Sport Tee - Grey', price: 2700, image: '/images/product-tee.png', category: "Men's Collection" },
-  ]);
+  // Backend Product Data
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get('/products');
+        setProducts(res.data);
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter(product => {
+    const catName = product.Category?.name?.toLowerCase() || '';
+    if (!catName.includes('men') || catName.includes('women')) return false;
+
+    const maxPrice = parseInt(priceRange.max, 10) || 5000;
+    const minPrice = parseInt(priceRange.min, 10) || 0;
+    if (product.price < minPrice || product.price > maxPrice) return false;
+
+    if (availability.inStock && !availability.outOfStock) {
+      if (product.stock <= 0) return false;
+    }
+    if (availability.outOfStock && !availability.inStock) {
+      if (product.stock > 0) return false;
+    }
+    if (!availability.inStock && !availability.outOfStock) {
+      return false;
+    }
+
+    return true;
+  });
 
   const toggleSize = (size) => {
-    setSelectedSizes(prev => 
+    setSelectedSizes(prev =>
       prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
     );
   };
@@ -60,13 +92,17 @@ const MensPage = () => {
           </div>
 
           <div className="flex-1">
-            <ProductGrid
-              products={products}
-              onQuickAdd={handleQuickAdd}
-              onToggleWishlist={(id) => console.log('Wishlist:', id)}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-            />
+            {loading ? (
+              <div className="text-center text-xl mt-20">Loading products...</div>
+            ) : (
+              <ProductGrid
+                products={filteredProducts}
+                onQuickAdd={handleQuickAdd}
+                onToggleWishlist={(id) => console.log('Wishlist:', id)}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+              />)
+            }
           </div>
         </div>
       </div>
