@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../lib/api';
+import { useModal } from '../../context/ModalContext';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const { showAlert } = useModal();
 
   useEffect(() => {
     fetchOrders();
@@ -29,9 +31,10 @@ const AdminOrders = () => {
       setOrders(orders.map(order => 
         order.id === orderId ? { ...order, status: newStatus } : order
       ));
+      showAlert('Success', 'Order status updated successfully', 'success');
     } catch (err) {
-      console.error('Error updating order status', err);
-      alert('Failed to update status');
+      console.error('Failed to update status', err);
+      showAlert('Error', 'Failed to update status', 'error');
     }
   };
 

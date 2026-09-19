@@ -3,22 +3,34 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminLayout = () => {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, logout, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   React.useEffect(() => {
+    if (loading) return;
     if (!user) {
       navigate('/login');
     } else if (!isAdmin) {
       navigate('/');
     }
-  }, [user, isAdmin, navigate]);
+  }, [user, isAdmin, navigate, loading]);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-500 font-semibold uppercase tracking-wider">Verifying Access...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user || !isAdmin) return null;
 

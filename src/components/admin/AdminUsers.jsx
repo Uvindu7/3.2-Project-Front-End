@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../lib/api';
+import { useModal } from '../../context/ModalContext';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showConfirm, showAlert } = useModal();
 
   useEffect(() => {
     fetchUsers();
@@ -20,16 +22,17 @@ const AdminUsers = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
-    
-    try {
-      await api.delete(`/admin/users/${id}`);
-      setUsers(users.filter(u => u.id !== id));
-    } catch (err) {
-      console.error('Failed to delete user', err);
-      alert('Failed to delete user. See console for details.');
-    }
+  const handleDelete = (id) => {
+    showConfirm('Delete User', 'Are you sure you want to delete this user? This cannot be undone.', async () => {
+      try {
+        await api.delete(`/admin/users/${id}`);
+        setUsers(users.filter(u => u.id !== id));
+        showAlert('Success', 'User deleted successfully', 'success');
+      } catch (err) {
+        console.error('Failed to delete user', err);
+        showAlert('Error', 'Failed to delete user. Please try again.', 'error');
+      }
+    }, 'Delete User');
   };
 
   if (loading) return <div className="animate-pulse">Loading users...</div>;

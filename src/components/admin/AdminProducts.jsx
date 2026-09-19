@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../lib/api';
+import { useModal } from '../../context/ModalContext';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [productToDelete, setProductToDelete] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { showAlert, showConfirm } = useModal();
   
-  const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({
     name: '',
     description: '',
@@ -26,10 +28,10 @@ const AdminProducts = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    fetchProducts();
   }, []);
 
-  const fetchData = async () => {
+  const fetchProducts = async () => {
     try {
       const [prodRes, catRes] = await Promise.all([
         api.get('/products'),
@@ -51,6 +53,7 @@ const AdminProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       // Use FormData to support image uploads
       const formData = new FormData();
@@ -75,11 +78,14 @@ const AdminProducts = () => {
         // Create
         await api.post('/products', formData, config);
       }
-      setIsEditing(false);
-      fetchData(); // Refresh list
+      setIsModalOpen(false);
+      fetchProducts();
+      showAlert('Success', `Product ${currentProduct.id ? 'updated' : 'added'} successfully!`, 'success');
     } catch (err) {
       console.error('Failed to save product', err);
-      alert(err.response?.data?.message || 'Failed to save product');
+      showAlert('Error', err.response?.data?.message || 'Failed to save product', 'error');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -119,7 +125,7 @@ const AdminProducts = () => {
         imageUrl: previewUrl // Temporarily show the local preview
       });
     } else {
-      alert('Please select an image file.');
+      showAlert('Error', 'Please select an image file.', 'error');
     }
   };
 
@@ -139,7 +145,7 @@ const AdminProducts = () => {
       style: product.style || 'Casual',
       color: product.color || ''
     });
-    setIsEditing(true);
+    setIsModalOpen(true);
   };
 
   const handleAddNew = () => {
@@ -157,22 +163,20 @@ const AdminProducts = () => {
       style: 'Casual',
       color: ''
     });
-    setIsEditing(true);
+    setIsModalOpen(true);
   };
 
-  const handleDeleteClick = (product) => {
-    setProductToDelete(product);
-  };
-
-  const confirmDelete = async () => {
-    if (!productToDelete) return;
-    try {
-      await api.delete(`/products/${productToDelete.id}`);
-      setProducts(products.filter(p => p.id !== productToDelete.id));
-      setProductToDelete(null);
-    } catch (err) {
-      console.error('Failed to delete product', err);
-    }
+  const confirmDelete = (product) => {
+    showConfirm('Delete Product', `Are you sure you want to delete "${product.name}"? This action cannot be undone.`, async () => {
+      try {
+        await api.delete(`/admin/products/${product.id}`);
+        fetchProducts();
+        showAlert('Success', 'Product deleted successfully', 'success');
+      } catch (err) {
+        console.error('Failed to delete product', err);
+        showAlert('Error', 'Failed to delete product', 'error');
+      }
+    }, 'Delete Product');
   };
 
   if (loading) return <div className="animate-pulse p-8">Loading products...</div>;
@@ -181,7 +185,7 @@ const AdminProducts = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-gray-800">Product Management</h2>
-        {!isEditing && (
+        {!isModalOpen && (
           <button 
             onClick={handleAddNew}
             className="bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2"
@@ -192,7 +196,7 @@ const AdminProducts = () => {
         )}
       </div>
 
-      {isEditing ? (
+      {isModalOpen ? (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold mb-4">{currentProduct.id ? 'Edit Product' : 'Add New Product'}</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -295,10 +299,24 @@ const AdminProducts = () => {
             </div>
             
             <div className="flex gap-4 pt-4">
-              <button type="submit" className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-                Save Product
+              <button 
+                type="submit" 
+                disabled={isSaving}
+                className={`px-6 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${isSaving ? 'bg-zinc-400 text-zinc-100 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}
+              >
+                {isSaving ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Saving...
+                  </>
+                ) : (
+                  'Save Product'
+                )}
               </button>
-              <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-2 rounded-lg font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
+              <button type="button" disabled={isSaving} onClick={() => setIsModalOpen(false)} className="px-6 py-2 rounded-lg font-semibold text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 Cancel
               </button>
             </div>
@@ -351,7 +369,7 @@ const AdminProducts = () => {
                         <button onClick={() => handleEdit(p)} className="text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors">
                             Edit
                         </button>
-                        <button onClick={() => handleDeleteClick(p)} className="text-rose-500 hover:text-rose-700 font-medium px-2 py-1 rounded hover:bg-rose-50 transition-colors">
+                        <button onClick={() => confirmDelete(p)} className="text-red-600 hover:text-red-800 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors">
                             Delete
                         </button>
                     </td>
@@ -364,39 +382,6 @@ const AdminProducts = () => {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {productToDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6">
-              <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Product</h3>
-              <p className="text-gray-500">
-                Are you sure you want to delete <span className="font-semibold text-gray-800">"{productToDelete.name}"</span>? This action cannot be undone.
-              </p>
-            </div>
-            <div className="bg-gray-50 p-4 border-t border-gray-100 flex justify-end gap-3">
-              <button 
-                onClick={() => setProductToDelete(null)}
-                className="px-4 py-2 font-semibold text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={confirmDelete}
-                className="px-4 py-2 font-semibold bg-rose-500 text-white hover:bg-rose-600 rounded-lg transition-colors shadow-sm"
-              >
-                Delete
-              </button>
-            </div>
           </div>
         </div>
       )}

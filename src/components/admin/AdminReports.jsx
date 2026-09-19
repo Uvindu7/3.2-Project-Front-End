@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
 import api from '../../lib/api';
+import { useModal } from '../../context/ModalContext';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
@@ -9,6 +11,7 @@ const AdminReports = () => {
   const [inventoryMetrics, setInventoryMetrics] = useState(null);
   const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showAlert } = useModal();
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -44,9 +47,9 @@ const AdminReports = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch (error) {
-      console.error('Error downloading PDF:', error);
-      alert('Failed to generate PDF. Please try again later.');
+    } catch (err) {
+      console.error('Failed to generate report', err);
+      showAlert('Error', 'Failed to generate PDF. Please try again later.', 'error');
     }
   };
 

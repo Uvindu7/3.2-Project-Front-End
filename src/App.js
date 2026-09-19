@@ -18,8 +18,8 @@ import CheckoutPage from './components/checkout/CheckoutPage';
 
 // Cart Context
 import { CartProvider } from './context/CartContext';
-
 import { AuthProvider } from './context/AuthContext';
+import { ModalProvider } from './context/ModalContext';
 import Profile from './components/auth/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
@@ -33,10 +33,11 @@ import AdminReports from './components/admin/AdminReports';
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <ScrollToTop />
+    <ModalProvider>
+      <AuthProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <ScrollToTop />
           <Routes>
             <Route element={<MainLayout />}>
               <Route path="/" element={<HomePage />} />
@@ -67,6 +68,7 @@ function App() {
         </BrowserRouter>
       </CartProvider>
     </AuthProvider>
+    </ModalProvider>
   );
 }
 

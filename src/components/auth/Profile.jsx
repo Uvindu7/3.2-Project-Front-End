@@ -16,7 +16,8 @@ const Profile = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    if (!user) {
       navigate('/login');
     }
     if (user) {
