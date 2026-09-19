@@ -55,6 +55,7 @@ const PaymentForm = ({ grandTotal, onSuccess, billing, cartItems }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email: billing.email,
+            billing,
             items: cartItems,
             grandTotal,
             transactionId: paymentIntent.id

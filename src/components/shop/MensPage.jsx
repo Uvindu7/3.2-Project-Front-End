@@ -53,7 +53,38 @@ const MensPage = () => {
       return false;
     }
 
+    // Fit filter
+    if (fit.slimFit || fit.baggy) {
+      const desc = (product.description || '').toLowerCase();
+      const name = (product.name || '').toLowerCase();
+      
+      let matchesFit = false;
+      if (fit.slimFit && (desc.includes('slim') || desc.includes('fitted') || name.includes('slim'))) {
+        matchesFit = true;
+      }
+      if (fit.baggy && (desc.includes('baggy') || desc.includes('oversized') || desc.includes('relaxed') || name.includes('baggy') || name.includes('oversized'))) {
+        matchesFit = true;
+      }
+      
+      if (!matchesFit) return false;
+    }
+
     return true;
+  });
+
+  const handleClearFilters = () => {
+    setSelectedSizes([]);
+    setPriceRange({ min: 0, max: 5000 });
+    setAvailability({ inStock: true, outOfStock: false });
+    setFit({ slimFit: false, baggy: false });
+  };
+
+  // Apply Sorting
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === 'low-high') return parseFloat(a.price) - parseFloat(b.price);
+    if (sortBy === 'high-low') return parseFloat(b.price) - parseFloat(a.price);
+    if (sortBy === 'recent') return new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt);
+    return 0; 
   });
 
   const toggleSize = (size) => {
@@ -88,6 +119,8 @@ const MensPage = () => {
               toggleAvailability={(key) => setAvailability(prev => ({ ...prev, [key]: !prev[key] }))}
               fit={fit}
               toggleFit={(key) => setFit(prev => ({ ...prev, [key]: !prev[key] }))}
+              onApplyFilters={() => {}}
+              onClearFilters={handleClearFilters}
             />
           </div>
 
@@ -96,7 +129,7 @@ const MensPage = () => {
               <div className="text-center text-xl mt-20">Loading products...</div>
             ) : (
               <ProductGrid
-                products={filteredProducts}
+                products={sortedProducts}
                 onQuickAdd={handleQuickAdd}
                 onToggleWishlist={(id) => console.log('Wishlist:', id)}
                 sortBy={sortBy}

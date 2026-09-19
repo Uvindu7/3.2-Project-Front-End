@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import CustomerOrders from './CustomerOrders';
 
 const Profile = () => {
   const { user, updateProfile, loading } = useAuth();
@@ -145,6 +146,10 @@ const Profile = () => {
               </button>
             </div>
           </form>
+
+          {/* Render Orders Here */}
+          <CustomerOrders />
+
         </div>
       </div>
     </div>

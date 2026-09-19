@@ -1,41 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../lib/api';
 
 const RecentlyViewed = ({ onQuickAdd }) => {
-  // Local state to manage individual item wishlist & added status for interactive experience
-  const [items, setItems] = useState([
-    {
-      id: 101,
-      image: '/images/product-tee.png',
-      name: 'Raglan Tee - Classic',
-      added: false,
-      wishlisted: false,
-      btnStyle: 'gray' // gray bg
-    },
-    {
-      id: 102,
-      image: '/images/product-tee.png',
-      name: 'Raglan Tee - Fitted',
-      added: false,
-      wishlisted: false,
-      btnStyle: 'black' // black bg
-    },
-    {
-      id: 103,
-      image: '/images/product-tee.png',
-      name: 'Raglan Tee - Oversized',
-      added: true, // starts as ADDED
-      wishlisted: true, // starts as filled heart
-      btnStyle: 'black'
-    },
-    {
-      id: 104,
-      image: '/images/product-tee.png',
-      name: 'Raglan Tee - Vintage',
-      added: false,
-      wishlisted: false,
-      btnStyle: 'gray'
-    }
-  ]);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecentlyViewed = async () => {
+      try {
+        const viewedStr = localStorage.getItem('recentlyViewed');
+        if (!viewedStr) {
+          setLoading(false);
+          return;
+        }
+
+        const viewedIds = JSON.parse(viewedStr);
+        if (viewedIds.length === 0) {
+          setLoading(false);
+          return;
+        }
+
+        // Fetch all products (simplest approach without custom endpoint)
+        const res = await api.get('/products');
+        const allProducts = res.data;
+
+        // Map viewed IDs to actual products and retain order
+        const recentProducts = viewedIds
+          .map(id => allProducts.find(p => p.id === id))
+          .filter(p => p !== undefined)
+          .map(p => ({
+            id: p.id,
+            image: p.imageUrl || '/images/product-tee.png',
+            name: p.name,
+            price: p.price,
+            added: false,
+            wishlisted: false,
+            btnStyle: 'black'
+          }));
+
+        setItems(recentProducts);
+      } catch (err) {
+        console.error('Failed to load recently viewed products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchRecentlyViewed();
+  }, []);
 
   const toggleWishlist = (id) => {
     setItems(
@@ -53,11 +65,14 @@ const RecentlyViewed = ({ onQuickAdd }) => {
       onQuickAdd({
         id: item.id,
         name: item.name,
-        price: 2400,
+        price: item.price,
         description: 'Recently viewed product'
       });
     }
   };
+
+  if (loading) return null;
+  if (items.length === 0) return null;
 
   return (
     <section className="py-12 border-t border-zinc-100">

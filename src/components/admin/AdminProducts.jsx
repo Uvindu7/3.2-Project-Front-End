@@ -15,10 +15,13 @@ const AdminProducts = () => {
     stock: '',
     categoryId: '',
     imageUrl: '',
+    imageFile: null,
     clothingType: 'T-Shirt',
     style: 'Casual',
     color: ''
   });
+
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -47,18 +50,74 @@ const AdminProducts = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Use FormData to support image uploads
+      const formData = new FormData();
+      Object.keys(currentProduct).forEach(key => {
+        if (key === 'imageFile') {
+          if (currentProduct.imageFile) {
+            formData.append('image', currentProduct.imageFile);
+          }
+        } else if (currentProduct[key] !== null && currentProduct[key] !== undefined) {
+          formData.append(key, currentProduct[key]);
+        }
+      });
+
+      const config = {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      };
+
       if (currentProduct.id) {
         // Update
-        await api.put(`/products/${currentProduct.id}`, currentProduct);
+        await api.put(`/products/${currentProduct.id}`, formData, config);
       } else {
         // Create
-        await api.post('/products', currentProduct);
+        await api.post('/products', formData, config);
       }
       setIsEditing(false);
       fetchData(); // Refresh list
     } catch (err) {
       console.error('Failed to save product', err);
       alert(err.response?.data?.message || 'Failed to save product');
+    }
+  };
+
+  // Drag and Drop Handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      handleFileSelection(file);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      handleFileSelection(file);
+    }
+  };
+
+  const handleFileSelection = (file) => {
+    if (file.type.startsWith('image/')) {
+      const previewUrl = URL.createObjectURL(file);
+      setCurrentProduct({
+        ...currentProduct,
+        imageFile: file,
+        imageUrl: previewUrl // Temporarily show the local preview
+      });
+    } else {
+      alert('Please select an image file.');
     }
   };
 
@@ -71,6 +130,7 @@ const AdminProducts = () => {
       stock: product.stock,
       categoryId: product.categoryId || '',
       imageUrl: product.imageUrl || '',
+      imageFile: null,
       clothingType: product.clothingType || 'Other',
       style: product.style || 'Casual',
       color: product.color || ''
@@ -86,6 +146,7 @@ const AdminProducts = () => {
       stock: '',
       categoryId: '',
       imageUrl: '',
+      imageFile: null,
       clothingType: 'Other',
       style: 'Casual',
       color: ''
@@ -152,8 +213,43 @@ const AdminProducts = () => {
                 <input required type="number" min="0" name="stock" value={currentProduct.stock} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-semibold mb-1">Image URL</label>
-                <input type="text" name="imageUrl" value={currentProduct.imageUrl} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
+                <label className="block text-sm font-semibold mb-1">Product Image</label>
+                <div 
+                  className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center transition-colors cursor-pointer min-h-[150px] ${isDragging ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-400 bg-white'}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('fileInput').click()}
+                >
+                  <input 
+                    id="fileInput"
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleFileChange} 
+                    className="hidden" 
+                  />
+                  
+                  {currentProduct.imageUrl ? (
+                    <div className="relative w-full flex justify-center">
+                      <img 
+                        src={currentProduct.imageUrl.startsWith('blob:') || currentProduct.imageUrl.startsWith('http') ? currentProduct.imageUrl : `http://localhost:5000${currentProduct.imageUrl}`} 
+                        alt="Preview" 
+                        className="h-40 object-contain rounded"
+                      />
+                      <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded cursor-pointer hover:bg-black" onClick={(e) => { e.stopPropagation(); setCurrentProduct({...currentProduct, imageUrl: '', imageFile: null}); }}>
+                        Change
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-500">
+                      <svg className="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <p className="font-semibold">Click to upload or drag and drop</p>
+                      <p className="text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1">Clothing Type</label>

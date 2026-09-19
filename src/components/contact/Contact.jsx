@@ -1,7 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import contactArt from '../../assets/contact-art.png';
 
 const Contact = () => {
+  const [result, setResult] = useState("");
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setResult("Sending...");
+    const formData = new FormData(event.target);
+    formData.append("access_key", "14f3b7e2-5a70-47e3-8974-c67de6f94902");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      setResult(data.success ? "Message sent successfully!" : "Error sending message.");
+      if (data.success) {
+        event.target.reset();
+      }
+    } catch (error) {
+      setResult("Error sending message.");
+    }
+  };
+
   return (
     <div className="pt-32 pb-20 px-6 max-w-[1200px] mx-auto">
       <div className="mb-12">
@@ -15,12 +39,14 @@ const Contact = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         {/* Contact Form Section */}
         <div className="bg-white rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-50">
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={onSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold tracking-widest text-[#333] uppercase">Full Name</label>
                 <input 
                   type="text" 
+                  name="name"
+                  required
                   placeholder="Enter your name" 
                   className="w-full bg-[#f8f8f8] border border-gray-100 rounded-xl px-4 py-4 text-sm outline-none focus:border-black/20 transition-all font-medium"
                 />
@@ -29,6 +55,8 @@ const Contact = () => {
                 <label className="text-[10px] font-bold tracking-widest text-[#333] uppercase">Email Address</label>
                 <input 
                   type="email" 
+                  name="email"
+                  required
                   placeholder="email@example.com" 
                   className="w-full bg-[#f8f8f8] border border-gray-100 rounded-xl px-4 py-4 text-sm outline-none focus:border-black/20 transition-all font-medium"
                 />
@@ -39,6 +67,8 @@ const Contact = () => {
               <label className="text-[10px] font-bold tracking-widest text-[#333] uppercase">Subject</label>
               <input 
                 type="text" 
+                name="subject"
+                required
                 placeholder="What is this regarding?" 
                 className="w-full bg-[#f8f8f8] border border-gray-100 rounded-xl px-4 py-4 text-sm outline-none focus:border-black/20 transition-all font-medium"
               />
@@ -47,16 +77,23 @@ const Contact = () => {
             <div className="space-y-2">
               <label className="text-[10px] font-bold tracking-widest text-[#333] uppercase">Message</label>
               <textarea 
+                name="message"
+                required
                 rows="5" 
                 placeholder="Type your message here..." 
                 className="w-full bg-[#f8f8f8] border border-gray-100 rounded-xl px-4 py-4 text-sm outline-none focus:border-black/20 transition-all font-medium resize-none"
               ></textarea>
             </div>
 
-            <button className="bg-black text-white px-8 py-4 rounded-xl text-[12px] font-bold tracking-widest hover:bg-[#333] transition-all flex items-center gap-3 group">
+            <button type="submit" className="bg-black text-white px-8 py-4 rounded-xl text-[12px] font-bold tracking-widest hover:bg-[#333] transition-all flex items-center gap-3 group">
               SEND INQUIRY
               <span className="group-hover:translate-x-1 transition-transform">→</span>
             </button>
+            {result && (
+              <p className={`text-sm mt-4 ${result.includes('Error') ? 'text-red-500' : 'text-green-500'}`}>
+                {result}
+              </p>
+            )}
           </form>
         </div>
 

@@ -52,6 +52,22 @@ const ProductDetails = () => {
         ]);
         setProduct(prodRes.data);
         setRecommendations(recRes.data);
+
+        // Update Recently Viewed in localStorage
+        if (prodRes.data) {
+          const viewedStr = localStorage.getItem('recentlyViewed');
+          let viewedIds = viewedStr ? JSON.parse(viewedStr) : [];
+          
+          // Remove if exists to push to front
+          viewedIds = viewedIds.filter(vId => vId !== prodRes.data.id);
+          viewedIds.unshift(prodRes.data.id);
+          
+          // Keep only last 4
+          if (viewedIds.length > 4) {
+            viewedIds.pop();
+          }
+          localStorage.setItem('recentlyViewed', JSON.stringify(viewedIds));
+        }
       } catch (err) {
         console.error('Failed to fetch product data', err);
       } finally {

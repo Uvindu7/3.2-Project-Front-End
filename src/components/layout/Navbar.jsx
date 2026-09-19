@@ -24,6 +24,14 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchValue.trim())}`);
+      setSearchValue(""); // Clear after search
+    }
+  };
+
   return (
     <header
       id="test-navbar"
@@ -57,6 +65,9 @@ const Navbar = () => {
               placeholder="Search..."
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSearch(e);
+              }}
               className="test-navbar__search-input"
               aria-label="Search"
             />
@@ -66,7 +77,8 @@ const Navbar = () => {
           <button
             id="test-search-btn"
             className="test-navbar__search-icon"
-            aria-label="Search"
+            aria-label="Submit Search"
+            onClick={handleSearch}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8"></circle>
