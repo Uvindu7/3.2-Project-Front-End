@@ -6,7 +6,7 @@ import ProductGrid from './ProductGrid';
 import RecentlyViewed from './RecentlyViewed';
 import { useCart } from '../../context/CartContext';
 
-const Shop = ({ onProductClick }) => {
+const Shop = ({ onProductClick, initialCategory = 'All Collection', title, description }) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,7 +16,7 @@ const Shop = ({ onProductClick }) => {
   const searchQuery = searchParams.get('search') || '';
 
   // Filter & Sort State
-  const [activeCategory, setActiveCategory] = useState('All Collection');
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [appliedSizes, setAppliedSizes] = useState([]);
   const [pendingPriceRange, setPendingPriceRange] = useState({ min: 0, max: 5000 });
@@ -24,6 +24,12 @@ const Shop = ({ onProductClick }) => {
   const [availability, setAvailability] = useState({ inStock: true, outOfStock: false });
   const [fit, setFit] = useState({ slimFit: false, baggy: false });
   const [sortBy, setSortBy] = useState('featured');
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+
+  // Sync category if prop changes (via routing)
+  useEffect(() => {
+    setActiveCategory(initialCategory);
+  }, [initialCategory]);
 
   // Backend Product Data
   const [products, setProducts] = useState([]);
@@ -76,9 +82,10 @@ const Shop = ({ onProductClick }) => {
   const handleQuickAdd = (product) => {
     addToCart({
       ...product,
-      size: 'M',
+      size: product.selectedSize || 'M',
       color: product.color || 'Default',
       collection: 'LIYARA',
+      maxStock: product.maxStock
     });
     navigate('/cart');
   };
@@ -99,44 +106,41 @@ const Shop = ({ onProductClick }) => {
     // Category filter
     if (activeCategory !== 'All Collection' && activeCategory !== 'Recently Viewed') {
       const catName = product.Category?.name?.toLowerCase() || '';
-      const filterName = activeCategory.toLowerCase().replace("'s collection", "").trim();
+      const filterName = activeCategory.toLowerCase().replace("'s collection", "").replace(" collection", "").trim();
+      
+      // Exact boundary matching to prevent 'women' from matching 'men'
+      if (filterName === 'men' && (catName.includes('women') || catName.includes("women's"))) {
+        return false;
+      }
       
       if (!catName.includes(filterName)) return false;
     }
     
+    const totalStock = (product.stockS || 0) + (product.stockM || 0) + (product.stockL || 0);
+
     // Availability filter
     if (availability.inStock && !availability.outOfStock) {
-      if (product.stock <= 0) return false;
+      if (totalStock <= 0) return false;
     }
     if (availability.outOfStock && !availability.inStock) {
-      if (product.stock > 0) return false;
+      if (totalStock > 0) return false;
     }
     if (!availability.inStock && !availability.outOfStock) {
       return false;
     }
 
-    // Size filter (mocked - assuming all products have all standard sizes, but if they specifically want 3XL maybe some don't. We'll just let all pass for standard sizes, as backend doesn't store size arrays)
+    // Size filter
     if (appliedSizes && appliedSizes.length > 0) {
-      // In a real app, we'd check if product.availableSizes contains one of appliedSizes
-      // For now, we assume all products are available in selected sizes.
+      const hasAvailableSize = appliedSizes.some(size => {
+        if (size === 'S' && product.stockS > 0) return true;
+        if (size === 'M' && product.stockM > 0) return true;
+        if (size === 'L' && product.stockL > 0) return true;
+        return false;
+      });
+      if (!hasAvailableSize) return false;
     }
 
-    // Fit filter
-    if (fit.slimFit || fit.baggy) {
-      const desc = (product.description || '').toLowerCase();
-      const name = (product.name || '').toLowerCase();
-      
-      let matchesFit = false;
-      if (fit.slimFit && (desc.includes('slim') || desc.includes('fitted') || name.includes('slim'))) {
-        matchesFit = true;
-      }
-      if (fit.baggy && (desc.includes('baggy') || desc.includes('oversized') || desc.includes('relaxed') || name.includes('baggy') || name.includes('oversized'))) {
-        matchesFit = true;
-      }
-      
-      // If fit filters are applied but product doesn't match any, filter it out
-      if (!matchesFit) return false;
-    }
+
 
     return true;
   });
@@ -155,9 +159,29 @@ const Shop = ({ onProductClick }) => {
   return (
     <div className="pt-32 pb-20 bg-white min-h-screen">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col lg:flex-row gap-12">
+        
+        {/* Dynamic Category Header */}
+        {title && (
+          <header className="mb-12">
+            <h1 className="text-4xl font-extrabold font-outfit text-[#111] mb-2 uppercase tracking-tight">{title}</h1>
+            {description && <p className="text-gray-500 max-w-2xl">{description}</p>}
+          </header>
+        )}
+
+        {/* Mobile Filter Toggle Button */}
+        <button 
+          className="lg:hidden w-full mb-6 py-3 border border-zinc-200 text-zinc-800 rounded text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-zinc-50 transition"
+          onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          {isMobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+        </button>
+
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-12">
           {/* Sidebar */}
-          <div className="w-full lg:w-64 flex-shrink-0">
+          <div className={`w-full lg:w-64 flex-shrink-0 ${isMobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
             <SidebarFilters
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}

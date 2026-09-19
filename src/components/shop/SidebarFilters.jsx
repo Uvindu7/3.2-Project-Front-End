@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SidebarFilters = ({
   activeCategory,
@@ -14,17 +15,25 @@ const SidebarFilters = ({
   onApplyFilters,
   onClearFilters
 }) => {
+  const navigate = useNavigate();
+
   const categories = [
     'All Collection',
-    'New Arrivals',
-    'Best Sellers',
     "Men's Collection",
     "Women's Collection",
-    "Kids' Collection",
-    'Recently Viewed'
+    "Kids' Collection"
   ];
 
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL'];
+  const handleCategoryClick = (cat) => {
+    setActiveCategory(cat);
+    
+    if (cat === "Men's Collection") navigate('/mens');
+    else if (cat === "Women's Collection") navigate('/womens');
+    else if (cat === "Kids' Collection") navigate('/kids');
+    else if (cat === "All Collection") navigate('/shop');
+  };
+
+  const sizes = ['S', 'M', 'L'];
 
   // Personalized Fit calculator states
   const [chestWidth, setChestWidth] = useState('');
@@ -41,10 +50,7 @@ const SidebarFilters = ({
     let recommendedSize = 'M';
     if (chest < 48) recommendedSize = 'S';
     else if (chest >= 48 && chest < 52) recommendedSize = 'M';
-    else if (chest >= 52 && chest < 56) recommendedSize = 'L';
-    else if (chest >= 56 && chest < 60) recommendedSize = 'XL';
-    else if (chest >= 60 && chest < 64) recommendedSize = 'XXL';
-    else recommendedSize = '3XL';
+    else recommendedSize = 'L';
 
     setFitRecommendation(`We recommend size ${recommendedSize} for you!`);
   };
@@ -60,7 +66,7 @@ const SidebarFilters = ({
           {categories.map((cat) => (
             <li key={cat}>
               <button
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryClick(cat)}
                 className={`text-sm text-left flex items-center justify-between w-full transition-all duration-200 ${
                   activeCategory === cat
                     ? 'text-black font-semibold translate-x-1'
@@ -234,32 +240,7 @@ const SidebarFilters = ({
           </div>
         </div>
 
-        {/* Fit Filter */}
-        <div className="mb-6">
-          <span className="block text-xs font-semibold text-zinc-800 mb-3 uppercase">
-            Fit
-          </span>
-          <div className="space-y-2.5">
-            <label className="flex items-center gap-3 cursor-pointer group text-xs text-zinc-700 hover:text-black font-medium">
-              <input
-                type="checkbox"
-                checked={fit.slimFit}
-                onChange={() => toggleFit('slimFit')}
-                className="w-4 h-4 border border-zinc-300 bg-white rounded-sm checked:bg-black checked:border-black appearance-none relative flex items-center justify-center after:content-['✓'] after:text-[10px] after:text-white after:font-bold after:hidden checked:after:block cursor-pointer transition-colors"
-              />
-              <span>Slim Fit</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer group text-xs text-zinc-700 hover:text-black font-medium">
-              <input
-                type="checkbox"
-                checked={fit.baggy}
-                onChange={() => toggleFit('baggy')}
-                className="w-4 h-4 border border-zinc-300 bg-white rounded-sm checked:bg-black checked:border-black appearance-none relative flex items-center justify-center after:content-['✓'] after:text-[10px] after:text-white after:font-bold after:hidden checked:after:block cursor-pointer transition-colors"
-              />
-              <span>Baggy</span>
-            </label>
-          </div>
-        </div>
+
 
         {/* Filter Action Buttons */}
         <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-col gap-3">

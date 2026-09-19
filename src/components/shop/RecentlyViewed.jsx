@@ -8,35 +8,46 @@ const RecentlyViewed = ({ onQuickAdd }) => {
   useEffect(() => {
     const fetchRecentlyViewed = async () => {
       try {
-        const viewedStr = localStorage.getItem('recentlyViewed');
-        if (!viewedStr) {
-          setLoading(false);
-          return;
-        }
-
-        const viewedIds = JSON.parse(viewedStr);
-        if (viewedIds.length === 0) {
-          setLoading(false);
-          return;
-        }
-
-        // Fetch all products (simplest approach without custom endpoint)
         const res = await api.get('/products');
         const allProducts = res.data;
 
-        // Map viewed IDs to actual products and retain order
-        const recentProducts = viewedIds
-          .map(id => allProducts.find(p => p.id === id))
-          .filter(p => p !== undefined)
-          .map(p => ({
-            id: p.id,
-            image: p.imageUrl || '/images/product-tee.png',
-            name: p.name,
-            price: p.price,
-            added: false,
-            wishlisted: false,
-            btnStyle: 'black'
-          }));
+        let recentProducts = [];
+
+        const viewedStr = localStorage.getItem('recentlyViewed');
+        if (viewedStr) {
+          const viewedIds = JSON.parse(viewedStr);
+          if (viewedIds.length > 0) {
+            recentProducts = viewedIds
+              .map(id => allProducts.find(p => p.id === id))
+              .filter(p => p !== undefined)
+              .map(p => ({
+                id: p.id,
+                image: p.imageUrl || '/images/product-tee.png',
+                name: p.name,
+                price: p.price,
+                added: false,
+                wishlisted: false,
+                btnStyle: 'black'
+              }));
+          }
+        }
+
+        // Fallback: If no recently viewed items, show the newest 4 products as "Recommended"
+        if (recentProducts.length === 0) {
+          recentProducts = [...allProducts]
+            .sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt))
+            .slice(0, 4)
+            .map(p => ({
+              id: p.id,
+              image: p.imageUrl || '/images/product-tee.png',
+              name: p.name,
+              price: p.price,
+              added: false,
+              wishlisted: false,
+              btnStyle: 'black',
+              isFallback: true
+            }));
+        }
 
         setItems(recentProducts);
       } catch (err) {
@@ -78,7 +89,7 @@ const RecentlyViewed = ({ onQuickAdd }) => {
     <section className="py-12 border-t border-zinc-100">
       <div className="text-left mb-6">
         <h2 className="font-outfit text-xl font-extrabold tracking-wide text-zinc-900 uppercase">
-          Recently Viewed Products
+          {items.length > 0 && items[0].isFallback ? 'Recommended For You' : 'Recently Viewed Products'}
         </h2>
         <p className="text-xs text-zinc-500 mt-1">
           Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!
@@ -93,6 +104,9 @@ const RecentlyViewed = ({ onQuickAdd }) => {
                 src={item.image}
                 alt={item.name}
                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                onClick={() => {
+                  if (item.id) window.location.href = `/product/${item.id}`;
+                }}
               />
 
               {/* Heart Wishlist Overlay Top-Right */}

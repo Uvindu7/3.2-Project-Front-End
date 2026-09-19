@@ -1,8 +1,11 @@
 import React from "react";
 
 const CartItem = ({ item, increaseQty, decreaseQty, removeItem }) => {
+  const isOOS = item.maxStock === 0;
+  const isMaxStockReached = item.quantity >= item.maxStock;
+
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-6 bg-white border border-gray-200 hover:shadow-lg transition rounded-xl">
+    <div className={`flex flex-col md:flex-row gap-6 p-6 bg-white border border-gray-200 hover:shadow-lg transition rounded-xl ${isOOS ? 'opacity-50 grayscale' : ''}`}>
       {/* Product Image */}
       <div className="w-full md:w-44 aspect-square bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
         <img
@@ -26,6 +29,12 @@ const CartItem = ({ item, increaseQty, decreaseQty, removeItem }) => {
               Color: <span className="font-medium">{item.color}</span> / Size:{" "}
               <span className="font-medium">{item.size}</span>
             </p>
+            {item.maxStock > 0 && item.maxStock < 10 && (
+              <p className="text-red-500 text-xs font-bold mt-2">Only {item.maxStock} left in stock!</p>
+            )}
+            {isOOS && (
+              <p className="text-red-500 text-xs font-bold mt-2">Out of stock</p>
+            )}
           </div>
           <div className="text-right flex-shrink-0">
             <p className="text-xs text-gray-400 mb-0.5">Unit price</p>
@@ -53,7 +62,8 @@ const CartItem = ({ item, increaseQty, decreaseQty, removeItem }) => {
             </span>
             <button
               onClick={() => increaseQty(item.id)}
-              className="px-4 py-2.5 text-lg font-semibold hover:bg-gray-100 transition-colors text-zinc-700"
+              disabled={isMaxStockReached || isOOS}
+              className={`px-4 py-2.5 text-lg font-semibold transition-colors ${isMaxStockReached || isOOS ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100 text-zinc-700'}`}
               aria-label="Increase quantity"
             >
               +

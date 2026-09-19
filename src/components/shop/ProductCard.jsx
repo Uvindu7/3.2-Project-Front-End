@@ -7,21 +7,35 @@ const ProductCard = ({
   onToggleWishlist,
   showARIcon = true
 }) => {
+  const totalStock = (product.stockS || 0) + (product.stockM || 0) + (product.stockL || 0);
+  const isOOS = totalStock === 0;
+
+  const handleQuickAdd = () => {
+    if (isOOS) return;
+    
+    let size = 'M';
+    let maxStock = product.stockM || 0;
+    
+    if (product.stockS > 0) { size = 'S'; maxStock = product.stockS; }
+    else if (product.stockM > 0) { size = 'M'; maxStock = product.stockM; }
+    else if (product.stockL > 0) { size = 'L'; maxStock = product.stockL; }
+
+    onQuickAdd({ ...product, selectedSize: size, maxStock });
+  };
+
   return (
-    <div className="group relative flex flex-col">
+    <div className={`group relative flex flex-col ${isOOS ? 'opacity-50 grayscale' : ''}`}>
       {/* Image Container */}
-      <div 
+      <div
         className="aspect-[3/4] w-full bg-zinc-100 rounded-sm overflow-hidden relative border border-zinc-100"
-        style={{ backgroundColor: product.color || 'transparent' }}
       >
         <Link to={`/product/${product.id}`} className="w-full h-full block">
-        <img
-          src={product.image}
-          alt={product.name}
-          className={`w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ${
-            product.color ? 'mix-blend-multiply opacity-90' : product.filterClass || ''
-          }`}
-        />
+          <img
+            src={product.imageUrl || product.image}
+            alt={product.name}
+            className={`w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ${product.filterClass || ''
+              }`}
+          />
         </Link>
 
         {/* Red Dot (Specifically for Product 11) */}
@@ -31,8 +45,8 @@ const ProductCard = ({
 
         {/* Top Right AR/3D View Icon */}
         {showARIcon && (
-          <div 
-            className="absolute top-3 right-3 bg-black text-white rounded-full w-9 h-9 flex items-center justify-center shadow-md select-none transition hover:scale-105 duration-200 cursor-pointer" 
+          <div
+            className="absolute top-3 right-3 bg-black text-white rounded-full w-9 h-9 flex items-center justify-center shadow-md select-none transition hover:scale-105 duration-200 cursor-pointer"
             aria-label="3D View"
           >
             <svg
@@ -54,10 +68,11 @@ const ProductCard = ({
         {/* Bottom Quick Add Banner */}
         <div className="absolute bottom-0 left-0 right-0">
           <button
-            onClick={() => onQuickAdd(product)}
-            className="w-full bg-[#c0c0c0] hover:bg-[#b0b0b0] text-black font-outfit text-sm font-extrabold tracking-widest py-3.5 transition-colors duration-200 uppercase"
+            onClick={handleQuickAdd}
+            disabled={isOOS}
+            className={`w-full font-outfit text-sm font-extrabold tracking-widest py-3.5 transition-colors duration-200 uppercase ${isOOS ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed' : 'bg-[#c0c0c0] hover:bg-[#b0b0b0] text-black'}`}
           >
-            QUICK ADD
+            {isOOS ? 'OUT OF STOCK' : 'QUICK ADD'}
           </button>
         </div>
       </div>
@@ -74,9 +89,8 @@ const ProductCard = ({
           {/* Heart Wishlist Button */}
           <button
             onClick={() => onToggleWishlist(product.id)}
-            className={`transition-colors p-1 ${
-              product.wishlisted ? 'text-red-500' : 'text-zinc-400 hover:text-red-500'
-            }`}
+            className={`transition-colors p-1 ${product.wishlisted ? 'text-red-500' : 'text-zinc-400 hover:text-red-500'
+              }`}
             aria-label="Toggle wishlist"
           >
             <svg

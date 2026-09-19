@@ -7,7 +7,8 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { useCart } from '../../context/CartContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 // Load Stripe once outside component to avoid re-rendering
 const STRIPE_PK =
@@ -153,7 +154,9 @@ const OrderSuccess = ({ paymentIntent, onContinue }) => (
 // ─── Main Checkout Page ───────────────────────────────────────────────────────
 const CheckoutPage = () => {
   const { cartItems, cartTotal, clearCart } = useCart();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [clientSecret, setClientSecret] = useState(null);
   const [isLoadingIntent, setIsLoadingIntent] = useState(true);
@@ -175,12 +178,28 @@ const CheckoutPage = () => {
   const shipping = cartTotal > 5000 ? 0 : 350;
   const grandTotal = cartTotal + shipping;
 
-  // Redirect to cart if empty
+  // Redirect to cart if empty or login if not authenticated
   useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login');
+      return;
+    }
     if (cartItems.length === 0 && !succeeded) {
       navigate('/cart');
     }
-  }, [cartItems, navigate, succeeded]);
+  }, [cartItems, navigate, succeeded, user, loading]);
+
+  // Pre-fill billing with user data if available
+  useEffect(() => {
+    if (user && !billing.email) {
+      setBilling(prev => ({
+        ...prev,
+        email: user.email || '',
+        firstName: user.username?.split(' ')[0] || '',
+        lastName: user.username?.split(' ')[1] || ''
+      }));
+    }
+  }, [user]);
 
   // Create PaymentIntent on mount
   useEffect(() => {

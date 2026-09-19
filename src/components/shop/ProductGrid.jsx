@@ -10,6 +10,16 @@ const ProductGrid = ({
   setSortBy
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // Show 9 products per page (3x3 grid)
+  const totalPages = Math.ceil(products.length / itemsPerPage) || 1;
+
+  // Reset to first page if products change (e.g. filtering)
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [products.length]);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="flex-1 text-left">
@@ -42,8 +52,8 @@ const ProductGrid = ({
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-        {products.map((product) => (
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-6 sm:gap-x-6 sm:gap-y-10">
+        {paginatedProducts.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
@@ -57,16 +67,18 @@ const ProductGrid = ({
       <div className="flex items-center justify-end gap-1 mt-12 border-t border-zinc-100 pt-6">
         <button
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          className="border border-zinc-200 text-zinc-600 hover:border-black hover:text-black w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-sm transition"
+          disabled={currentPage === 1}
+          className="border border-zinc-200 text-zinc-600 hover:border-black hover:text-black w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           &lt;
         </button>
         <span className="font-outfit text-xs font-bold text-zinc-800 border border-zinc-200 px-3 py-2 rounded-sm bg-white min-w-[36px] text-center">
-          {currentPage}/6
+          {currentPage}/{totalPages}
         </span>
         <button
-          onClick={() => setCurrentPage(Math.min(6, currentPage + 1))}
-          className="border border-zinc-200 text-zinc-600 hover:border-black hover:text-black w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-sm transition"
+          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="border border-zinc-200 text-zinc-600 hover:border-black hover:text-black w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           &gt;
         </button>

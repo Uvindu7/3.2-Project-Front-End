@@ -12,7 +12,9 @@ const AdminProducts = () => {
     name: '',
     description: '',
     price: '',
-    stock: '',
+    stockS: '',
+    stockM: '',
+    stockL: '',
     categoryId: '',
     imageUrl: '',
     imageFile: null,
@@ -127,7 +129,9 @@ const AdminProducts = () => {
       name: product.name,
       description: product.description || '',
       price: product.price,
-      stock: product.stock,
+      stockS: product.stockS,
+      stockM: product.stockM,
+      stockL: product.stockL,
       categoryId: product.categoryId || '',
       imageUrl: product.imageUrl || '',
       imageFile: null,
@@ -143,7 +147,9 @@ const AdminProducts = () => {
       name: '',
       description: '',
       price: '',
-      stock: '',
+      stockS: '',
+      stockM: '',
+      stockL: '',
       categoryId: '',
       imageUrl: '',
       imageFile: null,
@@ -209,8 +215,16 @@ const AdminProducts = () => {
                 <input required type="number" step="0.01" min="0" name="price" value={currentProduct.price} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Stock</label>
-                <input required type="number" min="0" name="stock" value={currentProduct.stock} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
+                <label className="block text-sm font-semibold mb-1">Stock (S)</label>
+                <input required type="number" min="0" name="stockS" value={currentProduct.stockS} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Stock (M)</label>
+                <input required type="number" min="0" name="stockM" value={currentProduct.stockM} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Stock (L)</label>
+                <input required type="number" min="0" name="stockL" value={currentProduct.stockL} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold mb-1">Product Image</label>
@@ -327,9 +341,11 @@ const AdminProducts = () => {
                     </td>
                     <td className="p-4 font-medium text-gray-900">${p.price}</td>
                     <td className="p-4">
-                        <span className={`px-2 py-1 rounded-md text-xs font-bold ${p.stock > 10 ? 'bg-green-100 text-green-700' : p.stock > 0 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>
-                            {p.stock} in stock
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${p.stockS > 10 ? 'bg-green-100 text-green-700' : p.stockS > 0 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>S: {p.stockS}</span>
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${p.stockM > 10 ? 'bg-green-100 text-green-700' : p.stockM > 0 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>M: {p.stockM}</span>
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${p.stockL > 10 ? 'bg-green-100 text-green-700' : p.stockL > 0 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>L: {p.stockL}</span>
+                        </div>
                     </td>
                     <td className="p-4 text-right space-x-2">
                         <button onClick={() => handleEdit(p)} className="text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors">

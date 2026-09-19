@@ -1,15 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CartItem from "../cart/CartItem";
 import { useCart } from "../../context/CartContext";
+import api from "../../lib/api";
 
 const CartPage = () => {
-  const { cartItems, increaseQty, decreaseQty, removeItem, clearCart, cartTotal } =
+  const { cartItems, increaseQty, decreaseQty, removeItem, clearCart, cartTotal, updateCartStocks } =
     useCart();
   const navigate = useNavigate();
+  const [isSyncing, setIsSyncing] = useState(true);
+
+  useEffect(() => {
+    const syncStock = async () => {
+      try {
+        if (cartItems.length === 0) {
+          setIsSyncing(false);
+          return;
+        }
+        
+        const uniqueIds = [...new Set(cartItems.map(item => item.id))];
+        const responses = await Promise.all(
+          uniqueIds.map(id => api.get(`/products/${id}`).catch(() => null))
+        );
+        
+        const products = responses.filter(Boolean).map(res => res.data);
+        
+        const updates = cartItems.map(item => {
+          const product = products.find(p => p.id === item.id);
+          if (product) {
+            let maxStock = 0;
+            if (item.size === 'S') maxStock = product.stockS;
+            else if (item.size === 'M') maxStock = product.stockM;
+            else if (item.size === 'L') maxStock = product.stockL;
+            return { id: item.id, size: item.size, maxStock };
+          }
+          return { id: item.id, size: item.size, maxStock: 0 }; // if product deleted
+        });
+        
+        updateCartStocks(updates);
+      } catch (err) {
+        console.error("Failed to sync cart stock", err);
+      } finally {
+        setIsSyncing(false);
+      }
+    };
+    syncStock();
+  }, []); // Only run on mount to update stock before checkout
 
   const shipping = cartTotal > 5000 ? 0 : 350;
   const grandTotal = cartTotal + shipping;
+  const hasOutOfStockItems = cartItems.some(item => item.maxStock === 0);
 
   return (
     <div className="pt-32 pb-24 bg-[#fcfcfc] min-h-screen">
@@ -133,10 +173,11 @@ const CartPage = () => {
                 </div>
 
                 <button
+                  disabled={hasOutOfStockItems || isSyncing}
                   onClick={() => navigate('/checkout')}
-                  className="mt-6 w-full bg-black text-white py-4 rounded-xl font-bold text-sm tracking-widest hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
+                  className={`mt-6 w-full py-4 rounded-xl font-bold text-sm tracking-widest transition-colors flex items-center justify-center gap-2 ${(hasOutOfStockItems || isSyncing) ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed' : 'bg-black text-white hover:bg-zinc-800'}`}
                 >
-                  CHECKOUT
+                  {isSyncing ? 'VERIFYING STOCK...' : hasOutOfStockItems ? 'REMOVE OUT OF STOCK ITEMS' : 'CHECKOUT'}
                   <svg
                     width="16"
                     height="16"

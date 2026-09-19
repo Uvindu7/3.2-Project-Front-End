@@ -22,9 +22,12 @@ const ProductSection = ({ id, title, description, products: initialProducts }) =
           {products.map(product => (
             <ProductCard 
               key={product.id} 
-              image={product.image} 
+              id={product.id}
+              image={product.imageUrl || product.image} 
               name={product.name} 
+              price={product.price}
               added={product.added} 
+              product={product}
             />
           ))}
         </div>

@@ -40,18 +40,52 @@ const ProductDetails = () => {
   
   const [product, setProduct] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const getAvailableStock = (size) => {
+    if (!product) return 0;
+    if (size === 'S') return product.stockS;
+    if (size === 'M') return product.stockM;
+    if (size === 'L') return product.stockL;
+    return 0;
+  };
+
+  const currentStock = getAvailableStock(selectedSize);
+
+  useEffect(() => {
+    if (quantity > currentStock && currentStock > 0) {
+      setQuantity(currentStock);
+    } else if (currentStock === 0) {
+      setQuantity(1);
+    }
+  }, [selectedSize, currentStock, quantity]);
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
         setLoading(true);
-        const [prodRes, recRes] = await Promise.all([
+        const [prodRes, recRes, allRes] = await Promise.all([
           api.get(`/products/${id}`),
-          api.get(`/products/${id}/recommendations`)
+          api.get(`/products/${id}/recommendations`),
+          api.get(`/products`)
         ]);
         setProduct(prodRes.data);
         setRecommendations(recRes.data);
+
+        // Find related products (same category, excluding current product)
+        if (prodRes.data && allRes.data) {
+          let related = allRes.data.filter(p => p.categoryId === prodRes.data.categoryId && p.id !== prodRes.data.id);
+          
+          // Fallback if not enough products in same category
+          if (related.length < 4) {
+            const otherProducts = allRes.data.filter(p => p.id !== prodRes.data.id && !related.find(r => r.id === p.id));
+            related = [...related, ...otherProducts].slice(0, 4);
+          } else {
+            related = related.slice(0, 4);
+          }
+          setRelatedProducts(related);
+        }
 
         // Update Recently Viewed in localStorage
         if (prodRes.data) {
@@ -156,21 +190,27 @@ const ProductDetails = () => {
                 <span className="text-[0.8rem] font-bold text-[#333]">SIZE</span>
                 <button className="text-[0.75rem] text-[#666] underline font-medium border-none bg-transparent">Size Guide</button>
               </div>
-              <div className="grid grid-cols-4 gap-3">
-                <SizeButton size="S" selectedSize={selectedSize} onClick={setSelectedSize} />
-                <SizeButton size="M" selectedSize={selectedSize} onClick={setSelectedSize} />
-                <SizeButton size="L" selectedSize={selectedSize} onClick={setSelectedSize} />
-                <SizeButton size="XL" selectedSize={selectedSize} onClick={setSelectedSize} />
+              <div className="grid grid-cols-3 gap-3">
+                <SizeButton size="S" selectedSize={selectedSize} onClick={setSelectedSize} disabled={getAvailableStock('S') === 0} />
+                <SizeButton size="M" selectedSize={selectedSize} onClick={setSelectedSize} disabled={getAvailableStock('M') === 0} />
+                <SizeButton size="L" selectedSize={selectedSize} onClick={setSelectedSize} disabled={getAvailableStock('L') === 0} />
               </div>
+              {currentStock > 0 && currentStock < 10 && (
+                <p className="text-red-500 text-sm font-semibold mt-1">Only {currentStock} left in stock!</p>
+              )}
+              {currentStock === 0 && (
+                <p className="text-red-500 text-sm font-semibold mt-1">Out of stock in this size.</p>
+              )}
             </div>
 
             <div className="flex gap-4 mt-4">
               <div className="flex items-center border-[1.5px] border-[#eee] rounded-lg overflow-hidden">
-                <button className="px-5 py-3 text-xl text-[#333] border-none bg-transparent" onClick={() => setQuantity(Math.max(1, quantity - 1))}>−</button>
+                <button className="px-5 py-3 text-xl text-[#333] border-none bg-transparent" onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={currentStock === 0}>−</button>
                 <span className="px-4 font-bold min-w-[40px] text-center">{quantity}</span>
-                <button className="px-5 py-3 text-xl text-[#333] border-none bg-transparent" onClick={() => setQuantity(quantity + 1)}>+</button>
+                <button className="px-5 py-3 text-xl text-[#333] border-none bg-transparent" onClick={() => setQuantity(Math.min(currentStock, quantity + 1))} disabled={currentStock === 0 || quantity >= currentStock}>+</button>
               </div>
               <button
+                disabled={currentStock === 0}
                 onClick={() => {
                   addToCart({
                     id: product.id,
@@ -181,16 +221,17 @@ const ProductDetails = () => {
                     color: selectedColor,
                     size: selectedSize,
                     quantity,
+                    maxStock: currentStock
                   });
                   navigate('/cart');
                 }}
-                className="flex-1 bg-black text-white rounded-lg font-bold text-[0.9rem] tracking-wider flex items-center justify-center gap-3"
+                className={`flex-1 rounded-lg font-bold text-[0.9rem] tracking-wider flex items-center justify-center gap-3 ${currentStock === 0 ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-black text-white'}`}
               >
-                ADD TO CART <span>🛒</span>
+                {currentStock === 0 ? 'OUT OF STOCK' : 'ADD TO CART'} <span>🛒</span>
               </button>
             </div>
 
-            <button className="w-full p-5 border-[1.5px] border-[#111] rounded-lg font-bold text-[0.9rem] tracking-wider transition-all duration-300 ease-custom hover:bg-[#f5f5f5] bg-transparent">BUY NOW</button>
+            <button disabled={currentStock === 0} className={`w-full p-5 border-[1.5px] rounded-lg font-bold text-[0.9rem] tracking-wider transition-all duration-300 ease-custom bg-transparent ${currentStock === 0 ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-[#111] hover:bg-[#f5f5f5]'}`}>BUY NOW</button>
 
             <div className="mt-8 flex flex-col gap-4 pt-8 border-t border-[#eee]">
               <div className="flex items-center gap-4 text-[0.85rem] text-[#555] font-medium">
@@ -234,6 +275,7 @@ const ProductDetails = () => {
           <ProductSection
             title="RELATED PRODUCTS"
             description="Explore the latest trends and must-haves. Shop now and stay stylish with our fresh collection!"
+            products={relatedProducts}
             onProductClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
         </div>
