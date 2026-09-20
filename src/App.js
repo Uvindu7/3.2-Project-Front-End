@@ -30,6 +30,8 @@ import AdminReviews from './components/admin/AdminReviews';
 import AdminProducts from './components/admin/AdminProducts';
 import AdminOrders from './components/admin/AdminOrders';
 import AdminReports from './components/admin/AdminReports';
+import BodyViewport from './components/3dviewport/BodyViewport';
+import VirtualFittingStudio from './components/3dviewport/VirtualFittingStudio';
 
 function App() {
   return (
@@ -52,6 +54,12 @@ function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/3d-viewport" element={<BodyViewport />} />
+              <Route path="/body-customizer" element={<BodyViewport />} />
+              <Route path="/3dviewport" element={<BodyViewport />} />
+              <Route path="/virtual-fitting" element={<VirtualFittingStudio />} />
+              <Route path="/virtual-fit" element={<VirtualFittingStudio />} />
+              <Route path="/try-fit" element={<VirtualFittingStudio />} />
               <Route path="/mens" element={<Shop key="mens" initialCategory="Men's Collection" title="MEN'S COLLECTION" description="Discover our premium range of men's apparel, designed for comfort and style." />} />
               <Route path="/womens" element={<Shop key="womens" initialCategory="Women's Collection" title="WOMEN'S COLLECTION" description="Explore our elegant and comfortable women's apparel for every occasion." />} />
               <Route path="/kids" element={<Shop key="kids" initialCategory="Kids Collection" title="KIDS COLLECTION" description="Fun, durable, and comfortable clothing designed for active kids." />} />

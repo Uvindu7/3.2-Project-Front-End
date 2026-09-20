@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -7,6 +7,8 @@ const Navbar = () => {
   const { cartCount } = useCart();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDarkPage = location.pathname.includes('3d') || location.pathname.includes('customizer');
 
   const [scrolled, setScrolled] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -38,7 +40,7 @@ const Navbar = () => {
     <>
       <header
         id="test-navbar"
-        className={`test-navbar${scrolled ? " test-navbar--scrolled" : ""}`}
+        className={`test-navbar${scrolled || isDarkPage ? " test-navbar--scrolled" : ""}`}
         style={{ fontFamily: "var(--font-manrope), Arial, sans-serif" }}
       >
         <div className="test-navbar__bar">
@@ -87,6 +89,7 @@ const Navbar = () => {
           <nav className="test-navbar__left max-[640px]:hidden" aria-label="Main navigation">
             <Link to="/" className="test-navbar__link">HOME</Link>
             <Link to="/shop" className="test-navbar__link">Shop</Link>
+            <Link to="/3d-viewport" className="test-navbar__link">3D FIT</Link>
             <Link to="/contact" className="test-navbar__link">CONTACT</Link>
             <Link to="/about" className="test-navbar__link">ABOUT US</Link>
           </nav>
@@ -204,6 +207,7 @@ const Navbar = () => {
           <nav className="flex flex-col gap-6 text-2xl font-bold tracking-widest uppercase mb-10">
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-zinc-500">HOME</Link>
             <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-zinc-500">SHOP</Link>
+            <Link to="/3d-viewport" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-zinc-500">3D FITTING</Link>
             <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-zinc-500">CONTACT</Link>
             <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-zinc-500">ABOUT US</Link>
           </nav>
