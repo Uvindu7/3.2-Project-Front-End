@@ -3,6 +3,17 @@ import React from "react";
 const CartItem = ({ item, increaseQty, decreaseQty, removeItem }) => {
   const isOOS = item.maxStock === 0;
   const isMaxStockReached = item.quantity >= item.maxStock;
+  
+  const basePrice = Number(item.price);
+  const isWholesale = item.quantity >= 10 && item.wholesaleDiscountPercent > 0;
+  const hasNormalDiscount = !isWholesale && item.discountPercent > 0;
+  
+  let effectivePrice = basePrice;
+  if (isWholesale) {
+    effectivePrice = basePrice * (1 - item.wholesaleDiscountPercent / 100);
+  } else if (hasNormalDiscount) {
+    effectivePrice = basePrice * (1 - item.discountPercent / 100);
+  }
 
   return (
     <div className={`flex flex-col md:flex-row gap-6 p-6 bg-white border border-gray-200 hover:shadow-lg transition rounded-xl ${isOOS ? 'opacity-50 grayscale' : ''}`}>
@@ -37,13 +48,30 @@ const CartItem = ({ item, increaseQty, decreaseQty, removeItem }) => {
             )}
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="text-xs text-gray-400 mb-0.5">Unit price</p>
+            <p className="text-xs text-gray-400 mb-0.5">Total</p>
             <h3 className="text-xl font-bold text-zinc-900">
-              Rs {(item.price * item.quantity).toLocaleString()}
+              Rs {(effectivePrice * item.quantity).toLocaleString()}
             </h3>
-            <p className="text-xs text-gray-400">
-              Rs {item.price.toLocaleString()} each
-            </p>
+            {isWholesale && (
+              <p className="text-xs font-bold text-green-600 mb-1 bg-green-50 px-2 py-1 rounded inline-block">
+                {item.wholesaleDiscountPercent}% Wholesale Discount!
+              </p>
+            )}
+            {hasNormalDiscount && (
+              <p className="text-xs font-bold text-green-600 mb-1 bg-green-50 px-2 py-1 rounded inline-block">
+                {item.discountPercent}% OFF!
+              </p>
+            )}
+            <div className="text-xs text-gray-400 flex flex-col items-end">
+               {(isWholesale || hasNormalDiscount) ? (
+                 <>
+                   <span className="line-through text-red-400">Rs {basePrice.toLocaleString()}</span>
+                   <span>Rs {effectivePrice.toLocaleString()} each</span>
+                 </>
+               ) : (
+                 <span>Rs {basePrice.toLocaleString()} each</span>
+               )}
+            </div>
           </div>
         </div>
 

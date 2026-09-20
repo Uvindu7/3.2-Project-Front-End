@@ -4,6 +4,8 @@ import api from '../../lib/api';
 const RecentlyViewed = ({ onQuickAdd }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
 
   useEffect(() => {
     const fetchRecentlyViewed = async () => {
@@ -32,11 +34,11 @@ const RecentlyViewed = ({ onQuickAdd }) => {
           }
         }
 
-        // Fallback: If no recently viewed items, show the newest 4 products as "Recommended"
+        // Fallback: If no recently viewed items, show the newest products as "Recommended"
         if (recentProducts.length === 0) {
           recentProducts = [...allProducts]
             .sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt))
-            .slice(0, 4)
+            .slice(0, 12)
             .map(p => ({
               id: p.id,
               image: p.imageUrl || '/images/product-tee.png',
@@ -85,6 +87,10 @@ const RecentlyViewed = ({ onQuickAdd }) => {
   if (loading) return null;
   if (items.length === 0) return null;
 
+  const totalPages = Math.ceil(items.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = items.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <section className="py-12 border-t border-zinc-100">
       <div className="text-left mb-6">
@@ -97,7 +103,7 @@ const RecentlyViewed = ({ onQuickAdd }) => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {items.map((item) => (
+        {paginatedItems.map((item) => (
           <div key={item.id} className="group flex flex-col relative">
             <div className="aspect-[3/4] w-full bg-[#f4f4f4] rounded-sm overflow-hidden relative border border-zinc-100">
               <img
@@ -146,6 +152,29 @@ const RecentlyViewed = ({ onQuickAdd }) => {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-end gap-1 mt-8 pt-4">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="border border-zinc-200 text-zinc-600 hover:border-black hover:text-black w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &lt;
+          </button>
+          <span className="font-outfit text-xs font-bold text-zinc-800 border border-zinc-200 px-3 py-2 rounded-sm bg-white min-w-[36px] text-center">
+            {currentPage}/{totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="border border-zinc-200 text-zinc-600 hover:border-black hover:text-black w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &gt;
+          </button>
+        </div>
+      )}
     </section>
   );
 };

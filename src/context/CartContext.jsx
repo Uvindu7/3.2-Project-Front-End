@@ -1,8 +1,13 @@
 import React, { createContext, useContext, useState } from 'react';
+import { useAuth } from './AuthContext';
+import { useModal } from './ModalContext';
 
 const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
+  const { showConfirm } = useModal();
+
   const [cartItems, setCartItems] = useState(() => {
     // Load initial cart from localStorage
     const savedCart = localStorage.getItem('cartItems');
@@ -15,6 +20,16 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const addToCart = (product) => {
+    if (!user) {
+      showConfirm(
+        'Registration Required',
+        'You must create an account to add items to your shopping cart. Do you want to register now?',
+        () => window.location.href = '/register',
+        'Register'
+      );
+      return;
+    }
+
     setCartItems((prev) => {
       const existing = prev.find(
         (item) =>
@@ -92,7 +107,19 @@ export const CartProvider = ({ children }) => {
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const cartTotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => {
+      let effectivePrice = Number(item.price);
+      
+      // If wholesale threshold reached and a wholesale discount exists, apply it (replacing normal discount)
+      if (item.quantity >= 10 && item.wholesaleDiscountPercent > 0) {
+        effectivePrice = effectivePrice * (1 - item.wholesaleDiscountPercent / 100);
+      } else if (item.discountPercent > 0) {
+        // Otherwise apply normal discount if it exists
+        effectivePrice = effectivePrice * (1 - item.discountPercent / 100);
+      }
+
+      return sum + (effectivePrice * item.quantity);
+    },
     0
   );
 

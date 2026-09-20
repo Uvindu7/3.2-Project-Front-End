@@ -19,6 +19,20 @@ const CustomerOrders = () => {
     fetchOrders();
   }, []);
 
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+    
+    try {
+      await api.put(`/payment/my-orders/${orderId}/cancel`);
+      setOrders(orders.map(order => 
+        order.id === orderId ? { ...order, status: 'Cancelled' } : order
+      ));
+    } catch (err) {
+      console.error('Failed to cancel order', err);
+      alert(err.response?.data?.error || "Failed to cancel order");
+    }
+  };
+
   if (loading) return <div className="py-12 text-center text-zinc-500 animate-pulse font-outfit">Loading your orders...</div>;
 
   if (orders.length === 0) {
@@ -31,11 +45,8 @@ const CustomerOrders = () => {
   }
 
   return (
-    <div className="mt-16 border-t border-black/5 pt-12">
-      <h2 className="text-3xl font-extrabold tracking-tight brand-font mb-8">My Orders</h2>
-      
-      <div className="space-y-6">
-        {orders.map(order => (
+    <div className="space-y-6">
+      {orders.map(order => (
           <div key={order.id} className="bg-white border border-zinc-100 rounded-3xl p-6 shadow-sm">
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6 pb-6 border-b border-zinc-50">
               <div>
@@ -58,9 +69,19 @@ const CustomerOrders = () => {
                   {order.status}
                 </span>
               </div>
-              <div className="text-right">
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Transaction ID</p>
-                <p className="font-mono text-xs text-zinc-500">{order.transactionId}</p>
+              <div className="text-right flex flex-col justify-between h-full">
+                <div>
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Transaction ID</p>
+                  <p className="font-mono text-xs text-zinc-500">{order.transactionId}</p>
+                </div>
+                {order.status === 'Pending' && (
+                  <button 
+                    onClick={() => handleCancelOrder(order.id)}
+                    className="mt-3 text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full transition-colors self-end"
+                  >
+                    Cancel Order
+                  </button>
+                )}
               </div>
             </div>
 
@@ -79,7 +100,6 @@ const CustomerOrders = () => {
             </div>
           </div>
         ))}
-      </div>
     </div>
   );
 };

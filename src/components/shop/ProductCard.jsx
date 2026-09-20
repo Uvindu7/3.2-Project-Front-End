@@ -112,12 +112,21 @@ const ProductCard = ({
 
         {/* Price & Status Row */}
         <div className="flex items-center gap-3 mt-2">
-          <span className="font-outfit text-sm font-extrabold text-zinc-900">
-            Rs {product.price.toLocaleString()}
-          </span>
-          {product.originalPrice && (
-            <span className="font-outfit text-xs font-semibold text-zinc-400 line-through">
-              Rs {product.originalPrice.toLocaleString()}
+          {product.discountPercent > 0 ? (
+            <>
+              <span className="font-outfit text-sm font-extrabold text-green-600">
+                Rs {(product.price * (1 - product.discountPercent / 100)).toFixed(2)}
+              </span>
+              <span className="font-outfit text-xs font-semibold text-red-400 line-through">
+                Rs {product.price.toLocaleString()}
+              </span>
+              <span className="text-[10px] font-bold text-green-700 bg-green-100 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
+                {product.discountPercent}% OFF
+              </span>
+            </>
+          ) : (
+            <span className="font-outfit text-sm font-extrabold text-zinc-900">
+              Rs {product.price.toLocaleString()}
             </span>
           )}
           {product.status && (

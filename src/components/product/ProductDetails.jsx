@@ -96,8 +96,8 @@ const ProductDetails = () => {
           viewedIds = viewedIds.filter(vId => vId !== prodRes.data.id);
           viewedIds.unshift(prodRes.data.id);
           
-          // Keep only last 4
-          if (viewedIds.length > 4) {
+          // Keep only last 12
+          if (viewedIds.length > 12) {
             viewedIds.pop();
           }
           localStorage.setItem('recentlyViewed', JSON.stringify(viewedIds));
@@ -150,9 +150,6 @@ const ProductDetails = () => {
             <TwoDProductCard
               src={product.imageUrl || "/images/charcoal-tee.png"}
               alt={product.name}
-              badge="3D INTERACTIVE"
-              badgeIcon={Icon3D}
-              onBadgeClick={() => setIs3D(true)}
             />
           )}
 
@@ -163,7 +160,33 @@ const ProductDetails = () => {
             </span>
             <div className="grid grid-cols-1 gap-5">
               <h1 className="text-[1.76rem] font-extrabold leading-[1.2] text-[#111] font-hanken">{product.name}</h1>
-              <h2 className="text-2xl font-regular text-[#111] -mt-2">RS {product.price}</h2>
+              
+              {(() => {
+                const isWholesale = quantity >= 10 && product.wholesaleDiscountPercent > 0;
+                const hasNormalDiscount = !isWholesale && product.discountPercent > 0;
+                const effectivePercent = isWholesale ? product.wholesaleDiscountPercent : (hasNormalDiscount ? product.discountPercent : 0);
+                const effectivePrice = product.price * (1 - effectivePercent / 100);
+
+                return (
+                  <div className="flex items-center gap-4 -mt-2">
+                    {effectivePercent > 0 ? (
+                      <>
+                        <h2 className="text-2xl font-regular text-red-500 line-through">RS {product.price}</h2>
+                        <div className="flex items-center gap-3">
+                          <h2 className="text-2xl font-bold text-green-600">
+                            RS {effectivePrice.toFixed(2)}
+                          </h2>
+                          <span className={`text-xs font-bold px-2 py-1 rounded-sm uppercase tracking-widest ${isWholesale ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}`}>
+                            {effectivePercent}% {isWholesale ? 'WHOLESALE OFF' : 'OFF'}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <h2 className="text-2xl font-regular text-[#111]">RS {product.price}</h2>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             <p className="text-[#666] text-[0.95rem] leading-relaxed mt-4 font-sans">
@@ -216,6 +239,8 @@ const ProductDetails = () => {
                     id: product.id,
                     name: product.name,
                     price: product.price,
+                    discountPercent: product.discountPercent,
+                    wholesaleDiscountPercent: product.wholesaleDiscountPercent,
                     image: product.imageUrl,
                     collection: product.Category?.name || 'FASHION',
                     color: selectedColor,
@@ -231,7 +256,28 @@ const ProductDetails = () => {
               </button>
             </div>
 
-            <button disabled={currentStock === 0} className={`w-full p-5 border-[1.5px] rounded-lg font-bold text-[0.9rem] tracking-wider transition-all duration-300 ease-custom bg-transparent ${currentStock === 0 ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-[#111] hover:bg-[#f5f5f5]'}`}>BUY NOW</button>
+            <button 
+              disabled={currentStock === 0} 
+              onClick={() => {
+                addToCart({
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  discountPercent: product.discountPercent,
+                  wholesaleDiscountPercent: product.wholesaleDiscountPercent,
+                  image: product.imageUrl,
+                  collection: product.Category?.name || 'FASHION',
+                  color: selectedColor,
+                  size: selectedSize,
+                  quantity,
+                  maxStock: currentStock
+                });
+                navigate('/checkout');
+              }}
+              className={`w-full p-5 border-[1.5px] rounded-lg font-bold text-[0.9rem] tracking-wider transition-all duration-300 ease-custom bg-transparent ${currentStock === 0 ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-[#111] hover:bg-[#f5f5f5]'}`}
+            >
+              BUY NOW
+            </button>
 
             <div className="mt-8 flex flex-col gap-4 pt-8 border-t border-[#eee]">
               <div className="flex items-center gap-4 text-[0.85rem] text-[#555] font-medium">
@@ -257,16 +303,25 @@ const ProductDetails = () => {
               <p className="text-[0.9rem] text-[#666] mb-6">Complete your {product.style} look with these matching items.</p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 {recommendations.map(rec => (
-                  <ProductCard
-                    key={rec.id}
-                    product={{...rec, image: rec.imageUrl || '/images/product-tee.png'}}
-                    onQuickAdd={(p) => {
-                      addToCart({ ...p, size: 'M', color: 'Default' });
-                      navigate('/cart');
-                    }}
-                    onToggleWishlist={() => {}}
-                    showARIcon={false}
-                  />
+                  <div key={rec.id} className="flex flex-col group cursor-pointer bg-white rounded-xl overflow-hidden border border-[#eee] hover:shadow-md transition-shadow">
+                    <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden">
+                      <img 
+                        src={rec.imageUrl && rec.imageUrl.startsWith('http') ? rec.imageUrl : (rec.imageUrl ? `http://localhost:5000${rec.imageUrl}` : '/images/placeholder.png')} 
+                        alt={rec.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 text-[10px] font-bold tracking-widest uppercase rounded">
+                        {rec.clothingType}
+                      </div>
+                    </div>
+                    <div className="p-4 flex flex-col items-center text-center">
+                      <h3 className="font-bold text-[0.95rem] text-[#111] mb-1">{rec.name}</h3>
+                      <p className="text-[0.8rem] text-[#666] flex items-center justify-center gap-2">
+                        {rec.color && <span className="w-3 h-3 rounded-full border border-gray-300" style={{backgroundColor: rec.color.toLowerCase()}}></span>}
+                        {rec.style} Style
+                      </p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

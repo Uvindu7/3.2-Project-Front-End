@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../lib/api';
+import { useModal } from '../../context/ModalContext';
 
 const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showConfirm, showAlert } = useModal();
 
   useEffect(() => {
     fetchReviews();
@@ -18,6 +20,19 @@ const AdminReviews = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const confirmDelete = (reviewId) => {
+    showConfirm('Delete Review', 'Are you sure you want to delete this review? This action cannot be undone.', async () => {
+      try {
+        await api.delete(`/admin/reviews/${reviewId}`);
+        fetchReviews();
+        showAlert('Success', 'Review deleted successfully', 'success');
+      } catch (err) {
+        console.error('Failed to delete review', err);
+        showAlert('Error', 'Failed to delete review', 'error');
+      }
+    }, 'Delete Review');
   };
 
   if (loading) return <div className="animate-pulse">Loading reviews...</div>;
@@ -53,8 +68,16 @@ const AdminReviews = () => {
           <div className="bg-gray-50 p-4 rounded-xl flex-1 text-sm text-gray-700 italic border border-gray-100">
             "{r.comment}"
           </div>
-          <div className="mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            Product ID: {r.productId}
+          <div className="mt-4 flex justify-between items-center">
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              Product ID: {r.productId}
+            </span>
+            <button 
+              onClick={() => confirmDelete(r.id)}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+            >
+              Delete Review
+            </button>
           </div>
         </div>
       ))}
