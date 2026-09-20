@@ -27,9 +27,11 @@ import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminUsers from './components/admin/AdminUsers';
 import AdminReviews from './components/admin/AdminReviews';
+import AdminCategories from './components/admin/AdminCategories';
 import AdminProducts from './components/admin/AdminProducts';
 import AdminOrders from './components/admin/AdminOrders';
 import AdminReports from './components/admin/AdminReports';
+import AdminRecommendations from './components/admin/AdminRecommendations';
 
 function App() {
   return (
@@ -60,9 +62,11 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="products" element={<AdminProducts />} />
+              <Route path="categories" element={<AdminCategories />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="reviews" element={<AdminReviews />} />
               <Route path="reports" element={<AdminReports />} />
+              <Route path="recommendations" element={<AdminRecommendations />} />
             </Route>
           </Routes>
         </BrowserRouter>

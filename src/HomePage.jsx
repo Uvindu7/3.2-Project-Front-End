@@ -20,12 +20,17 @@ function HomePage() {
     fetchProducts();
   }, []);
 
+  // Filter out out-of-stock products
+  const availableProducts = products.filter(
+    (p) => (p.stockS || 0) + (p.stockM || 0) + (p.stockL || 0) > 0
+  );
+
   // For New Arrivals, let's take the last 4 products added
-  const newArrivals = [...products].sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt)).slice(0, 4);
+  const newArrivals = [...availableProducts].sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt)).slice(0, 4);
   
   // For Best Sellers, let's just pick another slice, or sort differently if we had sales data
   // Using the first 4 products as a fallback for "Best Sellers"
-  const bestSellers = products.slice(0, 4);
+  const bestSellers = availableProducts.slice(0, 4);
 
   return (
     <>

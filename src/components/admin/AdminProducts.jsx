@@ -14,6 +14,8 @@ const AdminProducts = () => {
     name: '',
     description: '',
     price: '',
+    discountPercent: '',
+    wholesaleDiscountPercent: '',
     stockS: '',
     stockM: '',
     stockL: '',
@@ -135,6 +137,8 @@ const AdminProducts = () => {
       name: product.name,
       description: product.description || '',
       price: product.price,
+      discountPercent: product.discountPercent || '',
+      wholesaleDiscountPercent: product.wholesaleDiscountPercent || '',
       stockS: product.stockS,
       stockM: product.stockM,
       stockL: product.stockL,
@@ -153,6 +157,8 @@ const AdminProducts = () => {
       name: '',
       description: '',
       price: '',
+      discountPercent: '',
+      wholesaleDiscountPercent: '',
       stockS: '',
       stockM: '',
       stockL: '',
@@ -169,7 +175,7 @@ const AdminProducts = () => {
   const confirmDelete = (product) => {
     showConfirm('Delete Product', `Are you sure you want to delete "${product.name}"? This action cannot be undone.`, async () => {
       try {
-        await api.delete(`/admin/products/${product.id}`);
+        await api.delete(`/products/${product.id}`);
         fetchProducts();
         showAlert('Success', 'Product deleted successfully', 'success');
       } catch (err) {
@@ -215,8 +221,16 @@ const AdminProducts = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Price ($)</label>
+                <label className="block text-sm font-semibold mb-1">Price (Rs.)</label>
                 <input required type="number" step="0.01" min="0" name="price" value={currentProduct.price} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Normal Discount (%)</label>
+                <input type="number" min="0" max="100" name="discountPercent" value={currentProduct.discountPercent} onChange={handleInputChange} placeholder="Leave empty for 0%" className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Wholesale Discount (%)</label>
+                <input type="number" min="0" max="100" name="wholesaleDiscountPercent" value={currentProduct.wholesaleDiscountPercent} onChange={handleInputChange} placeholder="Leave empty for 0%" className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white" />
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1">Stock (S)</label>
@@ -273,11 +287,6 @@ const AdminProducts = () => {
                 <label className="block text-sm font-semibold mb-1">Clothing Type</label>
                 <select name="clothingType" value={currentProduct.clothingType} onChange={handleInputChange} className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white">
                   <option value="T-Shirt">T-Shirt</option>
-                  <option value="Trouser">Trouser</option>
-                  <option value="Jacket">Jacket</option>
-                  <option value="Shoes">Shoes</option>
-                  <option value="Accessory">Accessory</option>
-                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
@@ -357,7 +366,15 @@ const AdminProducts = () => {
                             <span className="text-gray-400">None</span>
                         )}
                     </td>
-                    <td className="p-4 font-medium text-gray-900">${p.price}</td>
+                    <td className="p-4 font-medium text-gray-900">
+                      Rs. {p.price}
+                      {(p.discountPercent > 0 || p.wholesaleDiscountPercent > 0) && (
+                        <div className="flex flex-col gap-0.5 mt-1">
+                          {p.discountPercent > 0 && <div className="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded inline-block w-fit">Normal: {p.discountPercent}% OFF</div>}
+                          {p.wholesaleDiscountPercent > 0 && <div className="text-[10px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded inline-block w-fit">Wholesale: {p.wholesaleDiscountPercent}% OFF</div>}
+                        </div>
+                      )}
+                    </td>
                     <td className="p-4">
                         <div className="flex flex-col gap-1">
                           <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${p.stockS > 10 ? 'bg-green-100 text-green-700' : p.stockS > 0 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>S: {p.stockS}</span>

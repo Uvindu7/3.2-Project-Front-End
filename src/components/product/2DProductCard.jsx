@@ -4,8 +4,8 @@ import React from 'react';
 const TwoDProductCard = ({
   src,
   alt = 'Product Image',
-  badge = '3D INTERACTIVE',
-  badgeIcon = '🎮',
+  badge = null,
+  badgeIcon = null,
   onBadgeClick,
   className = '',
 }) => {

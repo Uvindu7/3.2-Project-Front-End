@@ -93,8 +93,8 @@ const Navbar = () => {
 
           {/* ── Center: \___/ logo trapezoid ── */}
           <div className="test-navbar__center" aria-label="Logo">
-            <Link to="/" className="test-navbar__logo">
-              LOGO
+            <Link to="/" className="test-navbar__logo flex items-center justify-center mt-1">
+              <img src="/logo.png" alt="Liyara" className="h-6 md:h-8 lg:h-10 w-auto object-contain invert mix-blend-multiply scale-[1.1] lg:scale-[1.2]" />
             </Link>
           </div>
 

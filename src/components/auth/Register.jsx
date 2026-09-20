@@ -103,6 +103,8 @@ const Register = () => {
                 onChange={onChange}
                 placeholder="John Doe"
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
+                pattern="[a-zA-Z\s]*[a-zA-Z][a-zA-Z\s]*"
+                title="Full Name must contain at least one letter and can only include letters and spaces."
                 required
               />
             </div>
@@ -127,10 +129,36 @@ const Register = () => {
                 name="password"
                 value={password}
                 onChange={onChange}
-                placeholder="Min. 8 characters"
+                placeholder="Min. 8 characters, 1 Uppercase, 1 Number, 1 Special"
+                minLength="8"
+                pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}"
+                title="Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."
                 className="w-full bg-black/[0.03] border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-black/5 outline-none transition-all placeholder:text-text-muted/50"
                 required
               />
+              <div className="px-2 pt-1 text-[10px] text-text-muted flex flex-col gap-1">
+                <div className="font-bold tracking-wider uppercase mb-1">Password must contain:</div>
+                <div className={`flex items-center gap-1.5 ${password.length >= 8 ? 'text-emerald-500' : ''}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${password.length >= 8 ? 'bg-emerald-500' : 'bg-black/20'}`}></div>
+                  At least 8 characters
+                </div>
+                <div className={`flex items-center gap-1.5 ${/[A-Z]/.test(password) ? 'text-emerald-500' : ''}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(password) ? 'bg-emerald-500' : 'bg-black/20'}`}></div>
+                  One uppercase letter (A-Z)
+                </div>
+                <div className={`flex items-center gap-1.5 ${/[a-z]/.test(password) ? 'text-emerald-500' : ''}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${/[a-z]/.test(password) ? 'bg-emerald-500' : 'bg-black/20'}`}></div>
+                  One lowercase letter (a-z)
+                </div>
+                <div className={`flex items-center gap-1.5 ${/\d/.test(password) ? 'text-emerald-500' : ''}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${/\d/.test(password) ? 'bg-emerald-500' : 'bg-black/20'}`}></div>
+                  One number (0-9)
+                </div>
+                <div className={`flex items-center gap-1.5 ${/[\W_]/.test(password) ? 'text-emerald-500' : ''}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${/[\W_]/.test(password) ? 'bg-emerald-500' : 'bg-black/20'}`}></div>
+                  One special character (@, !, #, etc.)
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
