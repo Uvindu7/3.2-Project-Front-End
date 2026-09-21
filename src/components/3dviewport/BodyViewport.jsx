@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom';
 import BodyModelCanvas from './BodyModelCanvas';
 import {
   MEASUREMENT_FIELDS,
-  BODY_PRESETS,
   getDefaultMeasurements,
   toDisplayValue,
   toMetricValue,
-  calculateBMI,
   calculateRecommendedSize,
 } from './measurementConfig';
 
@@ -157,27 +155,9 @@ const BodyViewport = () => {
     }
   };
 
-  // Capture snapshot image
-  const handleTakeSnapshot = () => {
-    if (canvasRef.current) {
-      const dataUrl = canvasRef.current.takeSnapshot();
-      if (dataUrl) {
-        const link = document.createElement('a');
-        link.download = `custom_body_avatar_${Date.now()}.png`;
-        link.href = dataUrl;
-        link.click();
-        showToast('Snapshot saved to downloads!', 'success');
-      }
-    }
-  };
 
-  // Live analytics (BMI & Clothing Size Recommendation)
-  const bmiInfo = useMemo(() => {
-    const waist = measurements.belly ?? 80;
-    // Anthropometric estimation: 60cm ~ 50kg, 80cm ~ 70kg, 125cm ~ 115kg
-    const estimatedWeightKg = Math.round(50 + ((waist - 60) / 65) * 65);
-    return calculateBMI(measurements.weight || estimatedWeightKg);
-  }, [measurements.weight, measurements.belly]);
+
+  // Live analytics (Clothing Size Recommendation)
 
   const sizeRecommendation = useMemo(() => {
     return calculateRecommendedSize(measurements.chest, measurements.belly);
@@ -269,19 +249,6 @@ const BodyViewport = () => {
               <span>→</span>
             </Link>
 
-            {/* Snapshot Button */}
-          <button
-            onClick={handleTakeSnapshot}
-            title="Download high-resolution snapshot"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
-          >
-            <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span className="hidden md:inline">Snapshot</span>
-          </button>
-
           {/* Reset All */}
           <button
             onClick={handleResetAll}
@@ -292,17 +259,6 @@ const BodyViewport = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             <span>Reset</span>
-          </button>
-
-          {/* Save Profile */}
-          <button
-            onClick={handleSaveProfile}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-950 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span>Save Profile</span>
           </button>
         </div>
       </div>
@@ -410,9 +366,6 @@ const BodyViewport = () => {
                   <h4 className="text-xs font-bold text-white tracking-wide uppercase truncate">
                     {sizeRecommendation.label}
                   </h4>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 ${bmiInfo.color}`}>
-                    BMI {bmiInfo.bmi}
-                  </span>
                 </div>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   Fit recommendation based on your chest ({toDisplayValue('chest', measurements.chest, unitSystem)} {unitSystem === 'metric' ? 'cm' : 'in'}) & waist.
@@ -441,44 +394,9 @@ const BodyViewport = () => {
         {/* RIGHT: Parameter Controls & Slider Adjustment Panel (lg:col-span-5 xl:col-span-4) */}
         <div className="lg:col-span-5 xl:col-span-4 bg-slate-950 flex flex-col h-auto lg:h-[calc(100vh-175px)] overflow-y-auto border-l border-slate-800/80">
 
-          {/* Section Header & Quick Body Type Presets */}
-          <div className="p-5 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-sm sticky top-0 z-20">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-300 font-['Outfit'] flex items-center gap-2">
-                <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                </svg>
-                <span>Anatomical Parameters</span>
-              </h2>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-sky-950/80 text-sky-400 border border-sky-800">
-                Shape-Key Active
-              </span>
-            </div>
-
-            <p className="text-xs text-slate-400 mb-3.5">
-              Adjust sliders or type exact values in the input boxes to sculpt the 3D model to your exact physique.
-            </p>
-
-            {/* Body Type Presets Carousel */}
-            <div>
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1.5 block">
-                Quick Silhouette Presets
-              </span>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-                {BODY_PRESETS.map((preset) => (
-                  <button
-                    key={preset.id}
-                    onClick={() => handleApplyPreset(preset)}
-                    className="px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 transition-all hover:scale-105 active:scale-95"
-                  >
-                    {preset.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Category Filter Tabs */}
-            <div className="flex items-center gap-1 mt-3.5 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+          {/* Category Filter Tabs */}
+          <div className="p-4 border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-sm sticky top-0 z-20">
+            <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
               <button
                 onClick={() => setActiveTab('all')}
                 className={`flex-1 py-1 rounded-lg font-medium transition-all text-center ${activeTab === 'all' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'

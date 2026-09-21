@@ -7,8 +7,6 @@ import {
 } from './fittingProfiles';
 import {
   getDefaultMeasurements,
-  calculateBMI,
-  calculateRecommendedSize,
 } from './measurementConfig';
 
 const FABRIC_COLORS = [
@@ -70,19 +68,10 @@ const VirtualFittingStudio = () => {
     showToast(`Selected Size ${sizeKey} for your virtual fitting profile!`);
   };
 
-  // BMI & Recommended Size calculation
-  const bmiInfo = useMemo(() => {
-    const waist = measurements.belly ?? 80;
-    const estWeight = Math.round(50 + ((waist - 60) / 65) * 65);
-    return calculateBMI(estWeight);
-  }, [measurements.belly]);
 
-  const recommendedSize = useMemo(() => {
-    return calculateRecommendedSize(measurements.chest, measurements.belly);
-  }, [measurements.chest, measurements.belly]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white pt-20 lg:pt-24">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white pt-24 lg:pt-28">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-24 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-md bg-emerald-950/95 border border-emerald-500 text-emerald-200 text-sm font-semibold animate-fade-in">
@@ -119,23 +108,7 @@ const VirtualFittingStudio = () => {
             </div>
           </div>
 
-          {/* Right: Matched Profile Pill & Re-calibrate CTA */}
-          <div className="flex items-center flex-wrap gap-2.5">
-            {/* Matched Profile Badge */}
-            <div className="flex items-center gap-2 px-3 py-1 rounded-xl bg-sky-950/80 border border-sky-800/80 text-sky-300 text-xs">
-              <span className="w-2 h-2 rounded-full bg-sky-400" />
-              <span className="font-semibold">{activeProfile.tag}: {activeProfile.name}</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-900/60 text-sky-200">
-                {matchResult.confidence}% Anatomical Match
-              </span>
-            </div>
 
-            {/* BMI Badge */}
-            <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs">
-              <span className="text-slate-400">BMI</span>
-              <span className={`font-semibold ${bmiInfo.color}`}>{bmiInfo.bmi}</span>
-            </div>
-          </div>
         </div>
       </div>
 
